@@ -2,7 +2,6 @@
 
 from __future__ import annotations
 
-import argparse
 import json
 import random
 from functools import partial
@@ -282,6 +281,34 @@ class PlaintextCodec:
         return "".join(characters)
 
 
+class ByteCodec:
+    """Raw byte IDs for C5, with three IDs reserved for decoder control."""
+
+    PAD = 256
+    BOS = 257
+    EOS = 258
+    vocabulary_size = 259
+
+    def encode_plaintext(self, text: str) -> list[int]:
+        return [self.BOS, *text.encode("ascii"), self.EOS]
+
+    def encode_ciphertext(self, bits: str) -> list[int]:
+        if len(bits) % 8:
+            raise ValueError("Ciphertext bit length must be divisible by eight.")
+        return [int(bits[index : index + 8], 2) for index in range(0, len(bits), 8)]
+
+    def decode(self, token_ids: Sequence[int]) -> str:
+        output = bytearray()
+        for token_id in map(int, token_ids):
+            if token_id == self.EOS:
+                break
+            if token_id in (self.PAD, self.BOS):
+                continue
+            if 0 <= token_id < 256:
+                output.append(token_id)
+        return output.decode("latin-1")
+
+
 class PairedSequenceDataset(Dataset):
     """Pre-encode aligned ciphertext/plaintext examples for model training."""
 
@@ -326,12 +353,43 @@ class PairedSequenceDataset(Dataset):
         return self.examples[index]
 
 
+class BLTSequenceDataset(Dataset):
+    """C5 examples using raw ciphertext and plaintext bytes without BPE."""
+
+    def __init__(
+        self,
+        pairs: Sequence[tuple[str, str]],
+        codec: ByteCodec,
+        max_seq_length: int,
+    ) -> None:
+        self.examples: list[tuple[torch.Tensor, torch.Tensor]] = []
+        for index, (plaintext, ciphertext) in enumerate(pairs):
+            source = codec.encode_ciphertext(ciphertext)
+            target = codec.encode_plaintext(plaintext)
+            if max(len(source), len(target)) > max_seq_length:
+                raise ValueError(
+                    f"C5 example {index} exceeds max_seq_length={max_seq_length}."
+                )
+            self.examples.append(
+                (
+                    torch.tensor(source, dtype=torch.long),
+                    torch.tensor(target, dtype=torch.long),
+                )
+            )
+
+    def __len__(self) -> int:
+        return len(self.examples)
+
+    def __getitem__(self, index: int) -> tuple[torch.Tensor, torch.Tensor]:
+        return self.examples[index]
+
+
 class LengthBucketBatchSampler(Sampler[list[int]]):
     """Group examples of similar encoded lengths to minimize padding."""
 
     def __init__(
         self,
-        dataset: PairedSequenceDataset,
+        dataset: PairedSequenceDataset | BLTSequenceDataset,
         batch_size: int,
         shuffle: bool,
         seed: int,
@@ -477,5 +535,48 @@ def build_dataloaders(
     return loaders, target_codec, source_pad_id
 
 
-def parse_args() -> argparse.Namespace:
-    parser = argparse.ArgumentParser(description=__doc_
+def build_blt_dataloaders(
+    batch_size: int,
+    plain_path: Path = PLAIN_PATH,
+    cipher_path: Path = CIPHER_PATH,
+    train_ratio: float = 0.8,
+    validation_ratio: float = 0.1,
+    test_ratio: float = 0.1,
+    seed: int = 42,
+    max_seq_length: int = 4096,
+    num_workers: int = 0,
+    pin_memory: bool = False,
+) -> tuple[dict[str, DataLoader], ByteCodec, int]:
+    splits = split_dataset(
+        read_dataset(plain_path, cipher_path),
+        train_ratio,
+        validation_ratio,
+        test_ratio,
+        seed,
+    )
+    codec = ByteCodec()
+    datasets = {
+        name: BLTSequenceDataset(split, codec, max_seq_length)
+        for name, split in splits.items()
+    }
+    collate = partial(
+        collate_batch,
+        source_pad_id=codec.PAD,
+        target_pad_id=codec.PAD,
+    )
+    loaders = {
+        name: DataLoader(
+            dataset,
+            batch_sampler=LengthBucketBatchSampler(
+                dataset,
+                batch_size=batch_size,
+                shuffle=name == "train",
+                seed=seed,
+            ),
+            collate_fn=collate,
+            num_workers=num_workers,
+            pin_memory=pin_memory,
+        )
+        for name, dataset in datasets.items()
+    }
+    return loaders, codec, codec.PAD

@@ -139,9 +139,11 @@ def load_checkpoint(
 
 
 def _as_bits(text: str) -> str:
-    if set(text) <= {"0", "1"}:
-        return text
-    return "".join(f"{byte:08b}" for byte in text.encode("utf-8"))
+    try:
+        raw_bytes = text.encode("latin-1")
+    except UnicodeEncodeError:
+        raw_bytes = text.encode("utf-8")
+    return "".join(f"{byte:08b}" for byte in raw_bytes)
 
 
 def bit_level_accuracy(predictions: Sequence[str], targets: Sequence[str]) -> float:

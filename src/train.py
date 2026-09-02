@@ -1,4 +1,4 @@
-"""Train C1-C4 encoder-decoder Transformer configurations."""
+"""Train the C1-C5 encoder-decoder configurations."""
 
 from __future__ import annotations
 
@@ -18,10 +18,13 @@ from dataset import (
     MERGE_RULES_PATH,
     PLAIN_PATH,
     BinaryBPE,
+    ByteCodec,
     PlaintextCodec,
+    build_blt_dataloaders,
     build_dataloaders,
 )
 from models.attention import GroupedQueryAttention, MultiHeadAttention
+from models.blt import BLTLocalDecoder, BLTLocalEncoder
 from models.norm import LayerNorm, RMSNorm
 from models.positional import (
     RotaryPositionalEmbedding,
@@ -80,21 +83,36 @@ ARCHITECTURE_CONFIGS = {
         "attention": "mha",
         "positional": "sinusoidal",
         "norm": "layernorm",
+        "tokenization": "bpe",
     },
     "C2": {
         "attention": "mha",
         "positional": "rope",
         "norm": "layernorm",
+        "tokenization": "bpe",
     },
     "C3": {
         "attention": "gqa",
         "positional": "sinusoidal",
         "norm": "layernorm",
+        "tokenization": "bpe",
     },
     "C4": {
         "attention": "mha",
         "positional": "sinusoidal",
         "norm": "rmsnorm",
+        "tokenization": "bpe",
+    },
+    "C5": {
+        "attention": "mha",
+        "positional": "sinusoidal",
+        "norm": "layernorm",
+        "tokenization": "blt",
+        "patch_size": 4,
+        "local_d_model": 128,
+        "local_num_heads": 4,
+        "local_d_ff": 512,
+        "local_num_layers": 1,
     },
 }
 
@@ -351,6 +369,28 @@ class Seq2SeqTransformer(nn.Module):
             config["d_model"], target_vocab_size
         )
 
+    def encode_source(
+        self,
+        source_tokens: torch.Tensor,
+        source_padding_mask: torch.Tensor,
+    ) -> tuple[torch.Tensor, torch.Tensor]:
+        return self.encoder(source_tokens, source_padding_mask), source_padding_mask
+
+    def decode_from_memory(
+        self,
+        decoder_input: torch.Tensor,
+        memory: torch.Tensor,
+        memory_padding_mask: torch.Tensor,
+        target_padding_mask: torch.Tensor,
+    ) -> torch.Tensor:
+        hidden = self.decoder(
+            decoder_input,
+            memory,
+            target_padding_mask,
+            memory_padding_mask,
+        )
+        return self.output_projection(hidden)
+
     def forward(
         self,
         source_tokens: torch.Tensor,
@@ -358,20 +398,143 @@ class Seq2SeqTransformer(nn.Module):
         source_padding_mask: torch.Tensor | None = None,
         target_padding_mask: torch.Tensor | None = None,
     ) -> torch.Tensor:
-        memory = self.encoder(source_tokens, source_padding_mask)
-        hidden = self.decoder(
+        memory, memory_padding_mask = self.encode_source(
+            source_tokens, source_padding_mask
+        )
+        return self.decode_from_memory(
             decoder_input,
             memory,
+            memory_padding_mask,
             target_padding_mask,
-            source_padding_mask,
         )
-        return self.output_projection(hidden)
+
+
+class BLTSeq2SeqTransformer(nn.Module):
+    """C5: local byte models around the same global C1 Transformer."""
+
+    def __init__(self, config: dict[str, Any]) -> None:
+        super().__init__()
+        local_arguments = {
+            "byte_vocab_size": ByteCodec.vocabulary_size,
+            "padding_idx": ByteCodec.PAD,
+            "local_d_model": config["local_d_model"],
+            "global_d_model": config["d_model"],
+            "num_heads": config["local_num_heads"],
+            "d_ff": config["local_d_ff"],
+            "num_layers": config["local_num_layers"],
+            "patch_size": config["patch_size"],
+            "max_seq_length": config["max_seq_length"],
+            "dropout": config["dropout"],
+        }
+        self.source_local_encoder = BLTLocalEncoder(**local_arguments)
+        self.target_patch_encoder = BLTLocalEncoder(**local_arguments)
+        self.local_decoder = BLTLocalDecoder(**local_arguments)
+        self.patch_size = config["patch_size"]
+        self.bos_patch = nn.Parameter(torch.zeros(1, 1, config["d_model"]))
+
+        norm_class = _norm_class(config)
+        self.global_position = SinusoidalPositionalEncoding(
+            config["d_model"], config["max_seq_length"]
+        )
+        self.global_dropout = nn.Dropout(config["dropout"])
+        self.encoder_blocks = nn.ModuleList(
+            [
+                EncoderBlock(
+                    config["d_model"],
+                    _make_attention(config),
+                    norm_class,
+                    config["d_ff"],
+                    config["dropout"],
+                )
+                for _ in range(config["num_layers"])
+            ]
+        )
+        self.decoder_blocks = nn.ModuleList(
+            [
+                DecoderBlock(
+                    config["d_model"],
+                    _make_attention(config),
+                    _make_attention(config, use_rope=False),
+                    norm_class,
+                    config["d_ff"],
+                    config["dropout"],
+                )
+                for _ in range(config["num_layers"])
+            ]
+        )
+        self.encoder_norm = norm_class(config["d_model"])
+        self.decoder_norm = norm_class(config["d_model"])
+
+    def encode_source(
+        self,
+        source_tokens: torch.Tensor,
+        source_padding_mask: torch.Tensor,
+    ) -> tuple[torch.Tensor, torch.Tensor]:
+        x, patch_mask = self.source_local_encoder(
+            source_tokens, source_padding_mask
+        )
+        x = self.global_dropout(self.global_position(x))
+        for block in self.encoder_blocks:
+            x = block(x, key_padding_mask=patch_mask)
+        return self.encoder_norm(x), patch_mask
+
+    def decode_from_memory(
+        self,
+        decoder_input: torch.Tensor,
+        memory: torch.Tensor,
+        memory_padding_mask: torch.Tensor,
+        target_padding_mask: torch.Tensor,
+    ) -> torch.Tensor:
+        batch, length = decoder_input.shape
+        output_patch_mask = self.target_patch_encoder.patch_padding_mask(
+            target_padding_mask
+        )
+        if length > 1:
+            previous_patches, _ = self.target_patch_encoder(
+                decoder_input[:, 1:], target_padding_mask[:, 1:]
+            )
+        else:
+            previous_patches = memory.new_empty(batch, 0, memory.size(-1))
+
+        # Patch j sees only completed target patch j-1, never its own labels.
+        bos = self.bos_patch.expand(batch, -1, -1)
+        x = torch.cat((bos, previous_patches), dim=1)
+        x = x[:, : output_patch_mask.size(1)]
+        x = self.global_dropout(self.global_position(x))
+        for block in self.decoder_blocks:
+            x = block(
+                x,
+                memory,
+                target_padding_mask=output_patch_mask,
+                source_padding_mask=memory_padding_mask,
+            )
+        patch_states = self.decoder_norm(x)
+        return self.local_decoder(
+            decoder_input, patch_states, target_padding_mask
+        )
+
+    def forward(
+        self,
+        source_tokens: torch.Tensor,
+        decoder_input: torch.Tensor,
+        source_padding_mask: torch.Tensor,
+        target_padding_mask: torch.Tensor,
+    ) -> torch.Tensor:
+        memory, memory_padding_mask = self.encode_source(
+            source_tokens, source_padding_mask
+        )
+        return self.decode_from_memory(
+            decoder_input,
+            memory,
+            memory_padding_mask,
+            target_padding_mask,
+        )
 
 
 def get_config(config_name: str) -> dict[str, Any]:
     name = config_name.upper()
     if name not in ARCHITECTURE_CONFIGS:
-        raise ValueError("Configuration must be C1, C2, C3, or C4.")
+        raise ValueError("Configuration must be C1, C2, C3, C4, or C5.")
     config = {**BASE_CONFIG, **ARCHITECTURE_CONFIGS[name], "name": name}
     if config["d_model"] % config["num_heads"]:
         raise ValueError("d_model must be divisible by num_heads.")
@@ -379,23 +542,12 @@ def get_config(config_name: str) -> dict[str, Any]:
         raise ValueError("RoPE requires an even attention head dimension.")
     if name == "C3" and config["num_heads"] % config["num_kv_heads"]:
         raise ValueError("GQA query heads must be divisible by KV heads.")
+    if name == "C5":
+        if config["local_d_model"] % config["local_num_heads"]:
+            raise ValueError("C5 local_d_model must be divisible by local heads.")
+        if config["patch_size"] <= 0:
+            raise ValueError("C5 patch_size must be positive.")
     return config
-
-
-def build_model(
-    config: dict[str, Any],
-    source_vocab_size: int,
-    target_vocab_size: int,
-    source_padding_idx: int | None = None,
-    target_padding_idx: int | None = None,
-) -> Seq2SeqTransformer:
-    return Seq2SeqTransformer(
-        source_vocab_size,
-        target_vocab_size,
-        config,
-        source_padding_idx,
-        target_padding_idx,
-    )
 
 
 def compute_batch_loss(
@@ -499,7 +651,7 @@ def validate(
 
 @torch.no_grad()
 def greedy_decode(
-    model: Seq2SeqTransformer,
+    model: Seq2SeqTransformer | BLTSeq2SeqTransformer,
     source_tokens: torch.Tensor,
     source_padding_mask: torch.Tensor,
     bos_token_id: int,
@@ -507,7 +659,9 @@ def greedy_decode(
     max_length: int,
 ) -> torch.Tensor:
     model.eval()
-    memory = model.encoder(source_tokens, source_padding_mask)
+    memory, memory_padding_mask = model.encode_source(
+        source_tokens, source_padding_mask
+    )
     generated = torch.full(
         (source_tokens.size(0), 1),
         bos_token_id,
@@ -519,12 +673,13 @@ def greedy_decode(
     )
 
     for _ in range(max_length - 1):
-        hidden = model.decoder(
+        logits = model.decode_from_memory(
             generated,
             memory,
-            source_padding_mask=source_padding_mask,
+            memory_padding_mask,
+            torch.zeros_like(generated, dtype=torch.bool),
         )
-        next_token = model.output_projection(hidden[:, -1]).argmax(dim=-1)
+        next_token = logits[:, -1].argmax(dim=-1)
         next_token = torch.where(
             finished, torch.full_like(next_token, eos_token_id), next_token
         )
@@ -537,10 +692,10 @@ def greedy_decode(
 
 @torch.no_grad()
 def evaluate_model(
-    model: Seq2SeqTransformer,
+    model: Seq2SeqTransformer | BLTSeq2SeqTransformer,
     test_loader: DataLoader,
     device: torch.device,
-    target_codec: PlaintextCodec,
+    target_codec: PlaintextCodec | ByteCodec,
     max_length: int,
 ) -> dict[str, float]:
     predictions: list[str] = []
@@ -587,7 +742,6 @@ def _set_seed(seed: int) -> None:
 def run_training(
     config_name: str, overrides: dict[str, Any] | None = None
 ) -> dict[str, float]:
-    print("reached run training")    
     config = get_config(config_name)
     supplied = overrides or {}
     config.update({key: value for key, value in supplied.items() if value is not None})
@@ -610,45 +764,51 @@ def run_training(
         flush=True,
     )
 
-    print("Loading frozen BPE tokenizer...", flush=True)
-    source_tokenizer = BinaryBPE.load(Path(config["merge_rules_path"]))
-    print(
-        f"Tokenizer loaded ({len(source_tokenizer.merges)} merge rules).",
-        flush=True,
-    )
+    data_arguments = {
+        "batch_size": config["batch_size"],
+        "plain_path": Path(config["plain_path"]),
+        "cipher_path": Path(config["cipher_path"]),
+        "train_ratio": config["train_ratio"],
+        "validation_ratio": config["validation_ratio"],
+        "test_ratio": config["test_ratio"],
+        "seed": config["seed"],
+        "max_seq_length": config["max_seq_length"],
+        "num_workers": config["num_workers"],
+        "pin_memory": device.type == "cuda",
+    }
     print("Loading and encoding dataset splits...", flush=True)
-    loaders, target_codec, source_pad_id = build_dataloaders(
-        source_tokenizer,
-        config["batch_size"],
-        plain_path=Path(config["plain_path"]),
-        cipher_path=Path(config["cipher_path"]),
-        train_ratio=config["train_ratio"],
-        validation_ratio=config["validation_ratio"],
-        test_ratio=config["test_ratio"],
-        seed=config["seed"],
-        max_seq_length=config["max_seq_length"],
-        num_workers=config["num_workers"],
-        pin_memory=device.type == "cuda",
-    )
+    if config["tokenization"] == "blt":
+        loaders, target_codec, _ = build_blt_dataloaders(
+            **data_arguments
+        )
+        model = BLTSeq2SeqTransformer(config)
+    else:
+        print("Loading frozen BPE tokenizer...", flush=True)
+        source_tokenizer = BinaryBPE.load(Path(config["merge_rules_path"]))
+        loaders, target_codec, source_pad_id = build_dataloaders(
+            source_tokenizer, **data_arguments
+        )
+        model = Seq2SeqTransformer(
+            len(source_tokenizer.vocabulary) + 1,
+            target_codec.vocabulary_size,
+            config,
+            source_pad_id,
+            target_codec.PAD,
+        )
     print(
         "Dataset ready: "
         + ", ".join(f"{name}={len(loader.dataset)}" for name, loader in loaders.items()),
         flush=True,
     )
     print("Building model and optimizer...", flush=True)
-    model = build_model(
-        config,
-        source_vocab_size=len(source_tokenizer.vocabulary) + 1,
-        target_vocab_size=target_codec.vocabulary_size,
-        source_padding_idx=source_pad_id,
-        target_padding_idx=target_codec.PAD,
-    ).to(device)
+    model = model.to(device)
     optimizer = torch.optim.AdamW(
         model.parameters(),
         lr=config["learning_rate"],
         weight_decay=config["weight_decay"],
     )
     parameter_count = sum(parameter.numel() for parameter in model.parameters())
+    config["parameter_count"] = parameter_count
     print(f"Model ready ({parameter_count:,} parameters).", flush=True)
     print(f"Initializing WandB ({config['wandb_mode']} mode)...", flush=True)
     run = initialize_wandb(
@@ -803,7 +963,6 @@ def parse_args() -> argparse.Namespace:
 
 
 def main() -> None:
-    print("started this file")
     args = parse_args()
     overrides = {
         key: str(value) if isinstance(value, Path) else value
