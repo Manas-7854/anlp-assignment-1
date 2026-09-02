@@ -291,8 +291,12 @@ class PairedSequenceDataset(Dataset):
         source_tokenizer: BinaryBPE,
         target_codec: PlaintextCodec,
         max_seq_length: int,
+        split_name: str = "dataset",
     ) -> None:
         self.examples: list[tuple[torch.Tensor, torch.Tensor]] = []
+        total = len(pairs)
+        progress_every = max(1, total // 4)
+        print(f"Encoding {split_name} split ({total} examples)...", flush=True)
         for index, (plaintext, ciphertext) in enumerate(pairs):
             source = source_tokenizer.encode(ciphertext)
             target = target_codec.encode(plaintext)
@@ -308,6 +312,12 @@ class PairedSequenceDataset(Dataset):
                     torch.tensor(target, dtype=torch.long),
                 )
             )
+            completed = index + 1
+            if completed % progress_every == 0 or completed == total:
+                print(
+                    f"  {split_name}: encoded {completed}/{total} examples",
+                    flush=True,
+                )
 
     def __len__(self) -> int:
         return len(self.examples)
@@ -353,7 +363,11 @@ def build_datasets(
     target_codec = PlaintextCodec()
     datasets = {
         name: PairedSequenceDataset(
-            split, source_tokenizer, target_codec, max_seq_length
+            split,
+            source_tokenizer,
+            target_codec,
+            max_seq_length,
+            split_name=name,
         )
         for name, split in splits.items()
     }

@@ -45,7 +45,7 @@ from utils import (
 
 ROOT = Path(__file__).resolve().parents[1]
 
-BASE_CONFIG: dict[str, Any] = {
+BASE_CONFIG = {
     "d_model": 256,
     "num_layers": 4,
     "num_heads": 8,
@@ -445,7 +445,9 @@ def train_one_epoch(
     total_loss = 0.0
     total_tokens = 0
 
-    for batch in dataloader:
+    total_batches = len(dataloader)
+    progress_every = max(1, total_batches // 4)
+    for batch_number, batch in enumerate(dataloader, start=1):
         optimizer.zero_grad(set_to_none=True)
         loss, token_count, _ = compute_batch_loss(
             model, batch, device, target_pad_id
@@ -463,6 +465,10 @@ def train_one_epoch(
                 global_step,
                 float(loss.item()),
                 optimizer.param_groups[0]["lr"],
+            )
+        if batch_number % progress_every == 0 or batch_number == total_batches:
+            print(
+                f"  training: batch {batch_number}/{total_batches}", flush=True
             )
 
     return total_loss / total_tokens, global_step, total_tokens
@@ -581,6 +587,7 @@ def _set_seed(seed: int) -> None:
 def run_training(
     config_name: str, overrides: dict[str, Any] | None = None
 ) -> dict[str, float]:
+    print("reached run training")    
     config = get_config(config_name)
     supplied = overrides or {}
     config.update({key: value for key, value in supplied.items() if value is not None})
@@ -597,8 +604,19 @@ def run_training(
     device = _resolve_device(config["device"])
     config["device"] = str(device)
     _set_seed(config["seed"])
+    print(
+        f"Starting {config['name']} on {device} "
+        f"({config['epochs']} epochs, batch size {config['batch_size']})",
+        flush=True,
+    )
 
+    print("Loading frozen BPE tokenizer...", flush=True)
     source_tokenizer = BinaryBPE.load(Path(config["merge_rules_path"]))
+    print(
+        f"Tokenizer loaded ({len(source_tokenizer.merges)} merge rules).",
+        flush=True,
+    )
+    print("Loading and encoding dataset splits...", flush=True)
     loaders, target_codec, source_pad_id = build_dataloaders(
         source_tokenizer,
         config["batch_size"],
@@ -612,6 +630,12 @@ def run_training(
         num_workers=config["num_workers"],
         pin_memory=device.type == "cuda",
     )
+    print(
+        "Dataset ready: "
+        + ", ".join(f"{name}={len(loader.dataset)}" for name, loader in loaders.items()),
+        flush=True,
+    )
+    print("Building model and optimizer...", flush=True)
     model = build_model(
         config,
         source_vocab_size=len(source_tokenizer.vocabulary) + 1,
@@ -624,12 +648,16 @@ def run_training(
         lr=config["learning_rate"],
         weight_decay=config["weight_decay"],
     )
+    parameter_count = sum(parameter.numel() for parameter in model.parameters())
+    print(f"Model ready ({parameter_count:,} parameters).", flush=True)
+    print(f"Initializing WandB ({config['wandb_mode']} mode)...", flush=True)
     run = initialize_wandb(
         config["name"],
         config,
         project=config["wandb_project"],
         mode=config["wandb_mode"],
     )
+    print("WandB initialized. Starting training...", flush=True)
 
     checkpoint_dir = Path(config["output_dir"]) / "checkpoints" / config["name"]
     best_path = checkpoint_dir / "best.pt"
@@ -645,6 +673,7 @@ def run_training(
     training_started = start_timer()
 
     for epoch in range(1, config["epochs"] + 1):
+        print(f"Epoch {epoch}/{config['epochs']}: training...", flush=True)
         epoch_started = start_timer()
         reset_gpu_peak_memory(device)
         training_epoch_started = start_timer()
@@ -660,6 +689,7 @@ def run_training(
             config["log_every"],
         )
         training_epoch_seconds = elapsed_seconds(training_epoch_started)
+        print(f"Epoch {epoch}/{config['epochs']}: validating...", flush=True)
         validation_loss, validation_accuracy = validate(
             model,
             loaders["validation"],
@@ -773,6 +803,7 @@ def parse_args() -> argparse.Namespace:
 
 
 def main() -> None:
+    print("started this file")
     args = parse_args()
     overrides = {
         key: str(value) if isinstance(value, Path) else value
