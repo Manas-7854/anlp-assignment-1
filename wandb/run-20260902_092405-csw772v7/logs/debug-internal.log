@@ -1,0 +1,17 @@
+{"time":"2026-09-02T09:24:05.648848101+05:30","level":"INFO","msg":"wandb-core"}
+{"time":"2026-09-02T09:24:05.653916652+05:30","level":"INFO","msg":"stream: starting","core version":"0.29.0"}
+{"time":"2026-09-02T09:24:05.89466456+05:30","level":"INFO","msg":"stream: created new stream","id":"csw772v7"}
+{"time":"2026-09-02T09:24:05.89475244+05:30","level":"INFO","msg":"handler: started"}
+{"time":"2026-09-02T09:24:05.895661441+05:30","level":"INFO","msg":"stream: started"}
+{"time":"2026-09-02T09:24:05.896769873+05:30","level":"INFO","msg":"sender: started"}
+{"time":"2026-09-02T09:24:05.89678737+05:30","level":"INFO","msg":"writer: started","stream_id":"csw772v7"}
+{"time":"2026-09-02T09:24:08.57711268+05:30","level":"INFO","msg":"filestream: sending request","total_files":1,"console_offset":0,"console_lines":1}
+{"time":"2026-09-02T09:24:09.123754123+05:30","level":"INFO","msg":"filestream: request sent","status":"200 OK"}
+{"time":"2026-09-02T09:24:10.824635326+05:30","level":"INFO","msg":"fileTransfer: Close: file transfer manager closed"}
+{"time":"2026-09-02T09:24:10.825106237+05:30","level":"INFO","msg":"filestream: sending request","total_files":2,"console_offset":1,"console_lines":61,"uploaded_len":5,"complete":true,"exit_code":1}
+{"time":"2026-09-02T09:24:11.334441253+05:30","level":"INFO","msg":"filestream: request sent","status":"200 OK"}
+{"time":"2026-09-02T09:24:11.334682677+05:30","level":"INFO","msg":"stream: finishing up"}
+{"time":"2026-09-02T09:24:11.334717464+05:30","level":"INFO","msg":"handler: closed"}
+{"time":"2026-09-02T09:24:11.336117006+05:30","level":"INFO","msg":"sender: closed"}
+{"time":"2026-09-02T09:24:11.336139733+05:30","level":"INFO","msg":"stream: all finished"}
+{"time":"2026-09-02T09:24:13.337318106+05:30","level":"ERROR","msg":"stream: failed to shut down analytics","error":"shutdown errors: [failed to upload metrics: context deadline exceeded: retry-able request failure: body: {\"error\":\"rate limit exceeded: sdk telemetry rate limit exceeded\"} context deadline exceeded]"}

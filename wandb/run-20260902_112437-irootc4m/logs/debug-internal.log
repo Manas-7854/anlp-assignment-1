@@ -1,0 +1,31 @@
+{"time":"2026-09-02T11:24:38.209400623+05:30","level":"INFO","msg":"wandb-core"}
+{"time":"2026-09-02T11:24:38.214155618+05:30","level":"INFO","msg":"stream: starting","core version":"0.29.0"}
+{"time":"2026-09-02T11:24:38.623783694+05:30","level":"INFO","msg":"stream: created new stream","id":"irootc4m"}
+{"time":"2026-09-02T11:24:38.623864581+05:30","level":"INFO","msg":"handler: started"}
+{"time":"2026-09-02T11:24:38.624779483+05:30","level":"INFO","msg":"stream: started"}
+{"time":"2026-09-02T11:24:38.625836104+05:30","level":"INFO","msg":"writer: started","stream_id":"irootc4m"}
+{"time":"2026-09-02T11:24:38.625873064+05:30","level":"INFO","msg":"sender: started"}
+{"time":"2026-09-02T11:24:40.393081639+05:30","level":"INFO","msg":"filestream: sending request","total_files":1,"console_offset":0,"console_lines":2}
+{"time":"2026-09-02T11:24:40.868474547+05:30","level":"INFO","msg":"filestream: request sent","status":"200 OK"}
+{"time":"2026-09-02T11:24:55.393828126+05:30","level":"INFO","msg":"filestream: sending request","total_files":1,"events_offset":0,"events_lines":2,"uploaded_len":2}
+{"time":"2026-09-02T11:24:55.900404163+05:30","level":"INFO","msg":"filestream: request sent","status":"200 OK"}
+{"time":"2026-09-02T11:25:10.393193562+05:30","level":"INFO","msg":"filestream: sending request","total_files":3,"history_offset":0,"history_lines":3,"events_offset":2,"events_lines":2}
+{"time":"2026-09-02T11:25:10.932054202+05:30","level":"INFO","msg":"filestream: request sent","status":"200 OK"}
+{"time":"2026-09-02T11:25:25.393670731+05:30","level":"INFO","msg":"filestream: sending request","total_files":3,"history_offset":3,"history_lines":3,"events_offset":4,"events_lines":2}
+{"time":"2026-09-02T11:25:25.893820836+05:30","level":"INFO","msg":"filestream: request sent","status":"200 OK"}
+{"time":"2026-09-02T11:25:40.394141762+05:30","level":"INFO","msg":"filestream: sending request","total_files":4,"history_offset":6,"history_lines":3,"events_offset":6,"events_lines":2,"console_offset":2,"console_lines":1}
+{"time":"2026-09-02T11:25:40.88426164+05:30","level":"INFO","msg":"filestream: request sent","status":"200 OK"}
+{"time":"2026-09-02T11:25:55.393355531+05:30","level":"INFO","msg":"filestream: sending request","total_files":3,"history_offset":9,"history_lines":3,"events_offset":8,"events_lines":2}
+{"time":"2026-09-02T11:25:55.925474787+05:30","level":"INFO","msg":"filestream: request sent","status":"200 OK"}
+{"time":"2026-09-02T11:26:10.393733619+05:30","level":"INFO","msg":"filestream: sending request","total_files":3,"history_offset":12,"history_lines":3,"events_offset":10,"events_lines":2}
+{"time":"2026-09-02T11:26:10.90207409+05:30","level":"INFO","msg":"filestream: request sent","status":"200 OK"}
+{"time":"2026-09-02T11:26:25.394003074+05:30","level":"INFO","msg":"filestream: sending request","total_files":3,"history_offset":15,"history_lines":4,"console_offset":3,"console_lines":72}
+{"time":"2026-09-02T11:26:25.736972597+05:30","level":"INFO","msg":"fileTransfer: Close: file transfer manager closed"}
+{"time":"2026-09-02T11:26:25.996857256+05:30","level":"INFO","msg":"filestream: request sent","status":"200 OK"}
+{"time":"2026-09-02T11:26:25.997178636+05:30","level":"INFO","msg":"filestream: sending request","total_files":0,"uploaded_len":3,"complete":true,"exit_code":1}
+{"time":"2026-09-02T11:26:26.370786238+05:30","level":"INFO","msg":"filestream: request sent","status":"200 OK"}
+{"time":"2026-09-02T11:26:26.371844186+05:30","level":"INFO","msg":"stream: finishing up"}
+{"time":"2026-09-02T11:26:26.371894906+05:30","level":"INFO","msg":"handler: closed"}
+{"time":"2026-09-02T11:26:26.373106182+05:30","level":"INFO","msg":"sender: closed"}
+{"time":"2026-09-02T11:26:26.373125245+05:30","level":"INFO","msg":"stream: all finished"}
+{"time":"2026-09-02T11:26:28.373670193+05:30","level":"ERROR","msg":"stream: failed to shut down analytics","error":"shutdown errors: [failed to upload metrics: context deadline exceeded: retry-able request failure: body: {\"error\":\"rate limit exceeded: sdk telemetry rate limit exceeded\"} context deadline exceeded]"}

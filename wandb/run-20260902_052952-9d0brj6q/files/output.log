@@ -1,0 +1,38 @@
+WandB initialized. Starting training...
+Epoch 1/20: training...
+  training: batch 500/2000
+  training: batch 1000/2000
+  training: batch 1500/2000
+  training: batch 2000/2000
+Epoch 1/20: validating...
+epoch 001 | train 2.2363 | validation 2.0036 | token accuracy 0.4063 | 16164 tokens/s
+Epoch 2/20: training...
+  training: batch 500/2000
+  training: batch 1000/2000
+  training: batch 1500/2000
+  training: batch 2000/2000
+Epoch 2/20: validating...
+epoch 002 | train 1.9767 | validation 1.8575 | token accuracy 0.4521 | 16124 tokens/s
+Traceback (most recent call last):
+  File "/home2/manas.agrawal/miniforge3/envs/torch_env/lib/python3.12/site-packages/torch/serialization.py", line 850, in save
+    _save(
+  File "/home2/manas.agrawal/miniforge3/envs/torch_env/lib/python3.12/site-packages/torch/serialization.py", line 1090, in _save
+    zip_file.write_record("data.pkl", data_value, len(data_value))
+RuntimeError: [enforce fail at inline_container.cc:778] . PytorchStreamWriter failed writing file data.pkl: file write failed
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/home2/manas.agrawal/anlp/anlp-assignment-1/src/train.py", line 817, in <module>
+    main()
+  File "/home2/manas.agrawal/anlp/anlp-assignment-1/src/train.py", line 813, in main
+    run_training(args.config, overrides)
+  File "/home2/manas.agrawal/anlp/anlp-assignment-1/src/train.py", line 729, in run_training
+    save_checkpoint(
+  File "/home2/manas.agrawal/anlp/anlp-assignment-1/src/utils.py", line 116, in save_checkpoint
+    torch.save(
+  File "/home2/manas.agrawal/miniforge3/envs/torch_env/lib/python3.12/site-packages/torch/serialization.py", line 849, in save
+    with _open_zipfile_writer(f) as opened_zipfile:
+  File "/home2/manas.agrawal/miniforge3/envs/torch_env/lib/python3.12/site-packages/torch/serialization.py", line 690, in __exit__
+    self.file_like.write_end_of_file()
+RuntimeError: [enforce fail at inline_container.cc:603] . unexpected pos 64 vs 0

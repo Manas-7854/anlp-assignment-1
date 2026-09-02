@@ -1,0 +1,31 @@
+{"time":"2026-09-02T11:24:52.302950562+05:30","level":"INFO","msg":"wandb-core"}
+{"time":"2026-09-02T11:24:52.303653769+05:30","level":"INFO","msg":"stream: starting","core version":"0.29.0"}
+{"time":"2026-09-02T11:24:52.438336975+05:30","level":"INFO","msg":"stream: created new stream","id":"v7tudvh8"}
+{"time":"2026-09-02T11:24:52.438556942+05:30","level":"INFO","msg":"handler: started"}
+{"time":"2026-09-02T11:24:52.439832387+05:30","level":"INFO","msg":"stream: started"}
+{"time":"2026-09-02T11:24:52.439868591+05:30","level":"INFO","msg":"writer: started","stream_id":"v7tudvh8"}
+{"time":"2026-09-02T11:24:52.439945707+05:30","level":"INFO","msg":"sender: started"}
+{"time":"2026-09-02T11:24:53.626303696+05:30","level":"INFO","msg":"filestream: sending request","total_files":1,"console_offset":0,"console_lines":1}
+{"time":"2026-09-02T11:24:54.206046717+05:30","level":"INFO","msg":"filestream: request sent","status":"200 OK"}
+{"time":"2026-09-02T11:25:08.627307988+05:30","level":"INFO","msg":"filestream: sending request","total_files":4,"history_offset":0,"history_lines":1,"events_offset":0,"events_lines":2,"console_offset":1,"console_lines":1,"uploaded_len":2}
+{"time":"2026-09-02T11:25:09.056952312+05:30","level":"INFO","msg":"filestream: request sent","status":"200 OK"}
+{"time":"2026-09-02T11:25:23.626578174+05:30","level":"INFO","msg":"filestream: sending request","total_files":3,"history_offset":1,"history_lines":3,"events_offset":2,"events_lines":2}
+{"time":"2026-09-02T11:25:24.08307376+05:30","level":"INFO","msg":"filestream: request sent","status":"200 OK"}
+{"time":"2026-09-02T11:25:38.626867294+05:30","level":"INFO","msg":"filestream: sending request","total_files":3,"history_offset":4,"history_lines":3,"events_offset":4,"events_lines":2}
+{"time":"2026-09-02T11:25:39.041093469+05:30","level":"INFO","msg":"filestream: request sent","status":"200 OK"}
+{"time":"2026-09-02T11:25:53.627094898+05:30","level":"INFO","msg":"filestream: sending request","total_files":4,"history_offset":7,"history_lines":2,"events_offset":6,"events_lines":2,"console_offset":2,"console_lines":1}
+{"time":"2026-09-02T11:25:54.054794923+05:30","level":"INFO","msg":"filestream: request sent","status":"200 OK"}
+{"time":"2026-09-02T11:26:08.627370154+05:30","level":"INFO","msg":"filestream: sending request","total_files":3,"history_offset":9,"history_lines":3,"events_offset":8,"events_lines":2}
+{"time":"2026-09-02T11:26:09.070376946+05:30","level":"INFO","msg":"filestream: request sent","status":"200 OK"}
+{"time":"2026-09-02T11:26:23.627187024+05:30","level":"INFO","msg":"filestream: sending request","total_files":3,"history_offset":12,"history_lines":3,"events_offset":10,"events_lines":2}
+{"time":"2026-09-02T11:26:24.014269161+05:30","level":"INFO","msg":"filestream: request sent","status":"200 OK"}
+{"time":"2026-09-02T11:26:38.626980795+05:30","level":"INFO","msg":"filestream: sending request","total_files":3,"history_offset":15,"history_lines":2,"events_offset":12,"events_lines":2}
+{"time":"2026-09-02T11:26:39.856760733+05:30","level":"INFO","msg":"filestream: request sent","status":"200 OK"}
+{"time":"2026-09-02T11:26:42.151733136+05:30","level":"INFO","msg":"fileTransfer: Close: file transfer manager closed"}
+{"time":"2026-09-02T11:26:42.152410727+05:30","level":"INFO","msg":"filestream: sending request","total_files":3,"history_offset":17,"history_lines":2,"console_offset":3,"console_lines":72,"uploaded_len":3,"complete":true,"exit_code":1}
+{"time":"2026-09-02T11:26:42.55842769+05:30","level":"INFO","msg":"filestream: request sent","status":"200 OK"}
+{"time":"2026-09-02T11:26:42.558855214+05:30","level":"INFO","msg":"stream: finishing up"}
+{"time":"2026-09-02T11:26:42.558931758+05:30","level":"INFO","msg":"handler: closed"}
+{"time":"2026-09-02T11:26:42.56036787+05:30","level":"INFO","msg":"sender: closed"}
+{"time":"2026-09-02T11:26:42.560390767+05:30","level":"INFO","msg":"stream: all finished"}
+{"time":"2026-09-02T11:26:44.560749458+05:30","level":"ERROR","msg":"stream: failed to shut down analytics","error":"shutdown errors: [failed to upload metrics: context deadline exceeded: retry-able request failure: body: {\"error\":\"rate limit exceeded: sdk telemetry rate limit exceeded\"} context deadline exceeded]"}

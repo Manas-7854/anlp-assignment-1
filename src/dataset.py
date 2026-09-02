@@ -7,11 +7,11 @@ import json
 import random
 from functools import partial
 from pathlib import Path
-from typing import Sequence
+from typing import Iterator, Sequence
 
 import torch
 from torch.nn.utils.rnn import pad_sequence
-from torch.utils.data import DataLoader, Dataset
+from torch.utils.data import DataLoader, Dataset, Sampler
 
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -326,6 +326,62 @@ class PairedSequenceDataset(Dataset):
         return self.examples[index]
 
 
+class LengthBucketBatchSampler(Sampler[list[int]]):
+    """Group examples of similar encoded lengths to minimize padding."""
+
+    def __init__(
+        self,
+        dataset: PairedSequenceDataset,
+        batch_size: int,
+        shuffle: bool,
+        seed: int,
+        max_length_ratio: float = 1.5,
+    ) -> None:
+        if batch_size <= 0:
+            raise ValueError("batch_size must be positive.")
+        if max_length_ratio < 1.0:
+            raise ValueError("max_length_ratio must be at least 1.0.")
+        self.batch_size = batch_size
+        self.shuffle = shuffle
+        self.seed = seed
+        self.epoch = 0
+        self.lengths = [
+            max(source.numel(), target.numel())
+            for source, target in dataset.examples
+        ]
+        self.sorted_indices = sorted(
+            range(len(dataset)),
+            key=lambda index: (
+                self.lengths[index],
+                dataset.examples[index][0].numel(),
+                dataset.examples[index][1].numel(),
+            ),
+        )
+        self.batches: list[list[int]] = []
+        current_batch: list[int] = []
+        for index in self.sorted_indices:
+            too_long = current_batch and (
+                self.lengths[index]
+                > self.lengths[current_batch[0]] * max_length_ratio
+            )
+            if len(current_batch) == batch_size or too_long:
+                self.batches.append(current_batch)
+                current_batch = []
+            current_batch.append(index)
+        if current_batch:
+            self.batches.append(current_batch)
+
+    def __len__(self) -> int:
+        return len(self.batches)
+
+    def __iter__(self) -> Iterator[list[int]]:
+        batches = list(self.batches)
+        if self.shuffle:
+            random.Random(self.seed + self.epoch).shuffle(batches)
+            self.epoch += 1
+        yield from batches
+
+
 def collate_batch(
     batch: Sequence[tuple[torch.Tensor, torch.Tensor]],
     source_pad_id: int,
@@ -403,16 +459,18 @@ def build_dataloaders(
         source_pad_id=source_pad_id,
         target_pad_id=target_codec.PAD,
     )
-    generator = torch.Generator().manual_seed(seed)
     loaders = {
         name: DataLoader(
             dataset,
-            batch_size=batch_size,
-            shuffle=name == "train",
+            batch_sampler=LengthBucketBatchSampler(
+                dataset,
+                batch_size=batch_size,
+                shuffle=name == "train",
+                seed=seed,
+            ),
             collate_fn=collate,
             num_workers=num_workers,
             pin_memory=pin_memory,
-            generator=generator if name == "train" else None,
         )
         for name, dataset in datasets.items()
     }
@@ -420,52 +478,4 @@ def build_dataloaders(
 
 
 def parse_args() -> argparse.Namespace:
-    parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("--seed", type=int, default=42)
-    parser.add_argument("--train-ratio", type=float, default=0.8)
-    parser.add_argument("--validation-ratio", type=float, default=0.1)
-    parser.add_argument("--test-ratio", type=float, default=0.1)
-    parser.add_argument("--device", default="cpu", help="cpu, cuda, cuda:0, ...")
-    size = parser.add_mutually_exclusive_group()
-    size.add_argument("--number-of-merges", type=int)
-    size.add_argument("--vocabulary-size", type=int)
-    return parser.parse_args()
-
-
-def main() -> None:
-    args = parse_args()
-    pairs = read_dataset()
-    splits = split_dataset(
-        pairs,
-        train_ratio=args.train_ratio,
-        validation_ratio=args.validation_ratio,
-        test_ratio=args.test_ratio,
-        seed=args.seed,
-    )
-    print(
-        f"Loaded {len(pairs)} aligned pairs; "
-        f"train={len(splits['train'])}, "
-        f"validation={len(splits['validation'])}, test={len(splits['test'])}."
-    )
-
-    if args.vocabulary_size is not None:
-        if args.vocabulary_size < 2:
-            raise ValueError("vocabulary-size must be at least 2.")
-        number_of_merges = args.vocabulary_size - 2
-    else:
-        number_of_merges = (
-            args.number_of_merges if args.number_of_merges is not None else 254
-        )
-
-    train_ciphertext = [cipher for _, cipher in splits["train"]]
-    tokenizer = BinaryBPE.train(
-        train_ciphertext,
-        number_of_merges=number_of_merges,
-        device=args.device,
-    )
-    tokenizer.save()
-    print(f"Saved {len(tokenizer.merges)} rules to {MERGE_RULES_PATH}.")
-
-
-if __name__ == "__main__":
-    main()
+    parser = argparse.ArgumentParser(description=__doc_
