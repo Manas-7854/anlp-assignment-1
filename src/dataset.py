@@ -1,14 +1,17 @@
-"""Reproducible dataset splitting and binary BPE tokenization."""
+"""Dataset loading, batching, splitting, and binary BPE tokenization."""
 
 from __future__ import annotations
 
 import argparse
 import json
 import random
+from functools import partial
 from pathlib import Path
 from typing import Sequence
 
 import torch
+from torch.nn.utils.rnn import pad_sequence
+from torch.utils.data import DataLoader, Dataset
 
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -251,6 +254,155 @@ class BinaryBPE:
 
         rules = json.loads(path.read_text(encoding="utf-8"))
         return cls([(rule["left_id"], rule["right_id"]) for rule in rules])
+
+
+class PlaintextCodec:
+    """Map ASCII plaintext to decoder IDs with PAD/BOS/EOS control tokens."""
+
+    ASCII_VOCAB_SIZE = 128
+    PAD = 128
+    BOS = 129
+    EOS = 130
+    vocabulary_size = 131
+
+    def encode(self, text: str) -> list[int]:
+        if any(ord(character) >= self.ASCII_VOCAB_SIZE for character in text):
+            raise ValueError("Plaintext contains a non-ASCII character.")
+        return [self.BOS, *(ord(character) for character in text), self.EOS]
+
+    def decode(self, token_ids: Sequence[int]) -> str:
+        characters: list[str] = []
+        for token_id in map(int, token_ids):
+            if token_id == self.EOS:
+                break
+            if token_id in (self.PAD, self.BOS):
+                continue
+            if 0 <= token_id < self.ASCII_VOCAB_SIZE:
+                characters.append(chr(token_id))
+        return "".join(characters)
+
+
+class PairedSequenceDataset(Dataset):
+    """Pre-encode aligned ciphertext/plaintext examples for model training."""
+
+    def __init__(
+        self,
+        pairs: Sequence[tuple[str, str]],
+        source_tokenizer: BinaryBPE,
+        target_codec: PlaintextCodec,
+        max_seq_length: int,
+    ) -> None:
+        self.examples: list[tuple[torch.Tensor, torch.Tensor]] = []
+        for index, (plaintext, ciphertext) in enumerate(pairs):
+            source = source_tokenizer.encode(ciphertext)
+            target = target_codec.encode(plaintext)
+            if max(len(source), len(target)) > max_seq_length:
+                raise ValueError(
+                    f"Example {index} has source/target lengths "
+                    f"{len(source)}/{len(target)}, exceeding max_seq_length="
+                    f"{max_seq_length}. Data is not truncated."
+                )
+            self.examples.append(
+                (
+                    torch.tensor(source, dtype=torch.long),
+                    torch.tensor(target, dtype=torch.long),
+                )
+            )
+
+    def __len__(self) -> int:
+        return len(self.examples)
+
+    def __getitem__(self, index: int) -> tuple[torch.Tensor, torch.Tensor]:
+        return self.examples[index]
+
+
+def collate_batch(
+    batch: Sequence[tuple[torch.Tensor, torch.Tensor]],
+    source_pad_id: int,
+    target_pad_id: int,
+) -> dict[str, torch.Tensor]:
+    sources, targets = zip(*batch)
+    source_tokens = pad_sequence(
+        sources, batch_first=True, padding_value=source_pad_id
+    )
+    target_tokens = pad_sequence(
+        targets, batch_first=True, padding_value=target_pad_id
+    )
+    return {
+        "src_tokens": source_tokens,
+        "target_tokens": target_tokens,
+        "src_padding_mask": source_tokens.eq(source_pad_id),
+        "target_padding_mask": target_tokens.eq(target_pad_id),
+    }
+
+
+def build_datasets(
+    source_tokenizer: BinaryBPE,
+    plain_path: Path = PLAIN_PATH,
+    cipher_path: Path = CIPHER_PATH,
+    train_ratio: float = 0.8,
+    validation_ratio: float = 0.1,
+    test_ratio: float = 0.1,
+    seed: int = 42,
+    max_seq_length: int = 4096,
+) -> tuple[dict[str, PairedSequenceDataset], PlaintextCodec]:
+    pairs = read_dataset(plain_path, cipher_path)
+    splits = split_dataset(
+        pairs, train_ratio, validation_ratio, test_ratio, seed
+    )
+    target_codec = PlaintextCodec()
+    datasets = {
+        name: PairedSequenceDataset(
+            split, source_tokenizer, target_codec, max_seq_length
+        )
+        for name, split in splits.items()
+    }
+    return datasets, target_codec
+
+
+def build_dataloaders(
+    source_tokenizer: BinaryBPE,
+    batch_size: int,
+    plain_path: Path = PLAIN_PATH,
+    cipher_path: Path = CIPHER_PATH,
+    train_ratio: float = 0.8,
+    validation_ratio: float = 0.1,
+    test_ratio: float = 0.1,
+    seed: int = 42,
+    max_seq_length: int = 4096,
+    num_workers: int = 0,
+    pin_memory: bool = False,
+) -> tuple[dict[str, DataLoader], PlaintextCodec, int]:
+    datasets, target_codec = build_datasets(
+        source_tokenizer,
+        plain_path,
+        cipher_path,
+        train_ratio,
+        validation_ratio,
+        test_ratio,
+        seed,
+        max_seq_length,
+    )
+    source_pad_id = len(source_tokenizer.vocabulary)
+    collate = partial(
+        collate_batch,
+        source_pad_id=source_pad_id,
+        target_pad_id=target_codec.PAD,
+    )
+    generator = torch.Generator().manual_seed(seed)
+    loaders = {
+        name: DataLoader(
+            dataset,
+            batch_size=batch_size,
+            shuffle=name == "train",
+            collate_fn=collate,
+            num_workers=num_workers,
+            pin_memory=pin_memory,
+            generator=generator if name == "train" else None,
+        )
+        for name, dataset in datasets.items()
+    }
+    return loaders, target_codec, source_pad_id
 
 
 def parse_args() -> argparse.Namespace:
