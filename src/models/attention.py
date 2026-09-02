@@ -7,6 +7,8 @@ import math
 import torch
 from torch import nn
 
+from .positional import RotaryPositionalEmbedding
+
 
 class ScaledDotProductAttention(nn.Module):
     """Compute softmax(QK^T / sqrt(d_k))V."""
@@ -106,6 +108,7 @@ class MultiHeadAttention(nn.Module):
         num_heads: int,
         dropout: float = 0.0,
         bias: bool = True,
+        rope: RotaryPositionalEmbedding | None = None,
     ) -> None:
         super().__init__()
         if d_model <= 0 or num_heads <= 0:
@@ -116,6 +119,7 @@ class MultiHeadAttention(nn.Module):
         self.d_model = d_model
         self.num_heads = num_heads
         self.head_dim = d_model // num_heads
+        self.rope = rope
 
         self.q_proj = nn.Linear(d_model, d_model, bias=bias)
         self.k_proj = nn.Linear(d_model, d_model, bias=bias)
@@ -145,6 +149,9 @@ class MultiHeadAttention(nn.Module):
         q = self._split_heads(self.q_proj(query))
         k = self._split_heads(self.k_proj(key))
         v = self._split_heads(self.v_proj(value))
+
+        if self.rope is not None:
+            q, k = self.rope(q, k)
 
         attended, weights = self.attention(
             q,
