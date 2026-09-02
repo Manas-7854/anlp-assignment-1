@@ -1,0 +1,1526 @@
+[
+  {
+    "left_id": 0,
+    "right_id": 0,
+    "new_id": 2,
+    "token": "00"
+  },
+  {
+    "left_id": 0,
+    "right_id": 1,
+    "new_id": 3,
+    "token": "01"
+  },
+  {
+    "left_id": 1,
+    "right_id": 2,
+    "new_id": 4,
+    "token": "100"
+  },
+  {
+    "left_id": 1,
+    "right_id": 3,
+    "new_id": 5,
+    "token": "101"
+  },
+  {
+    "left_id": 3,
+    "right_id": 3,
+    "new_id": 6,
+    "token": "0101"
+  },
+  {
+    "left_id": 1,
+    "right_id": 1,
+    "new_id": 7,
+    "token": "11"
+  },
+  {
+    "left_id": 3,
+    "right_id": 2,
+    "new_id": 8,
+    "token": "0100"
+  },
+  {
+    "left_id": 4,
+    "right_id": 2,
+    "new_id": 9,
+    "token": "10000"
+  },
+  {
+    "left_id": 1,
+    "right_id": 5,
+    "new_id": 10,
+    "token": "1101"
+  },
+  {
+    "left_id": 1,
+    "right_id": 4,
+    "new_id": 11,
+    "token": "1100"
+  },
+  {
+    "left_id": 4,
+    "right_id": 5,
+    "new_id": 12,
+    "token": "100101"
+  },
+  {
+    "left_id": 2,
+    "right_id": 2,
+    "new_id": 13,
+    "token": "0000"
+  },
+  {
+    "left_id": 4,
+    "right_id": 4,
+    "new_id": 14,
+    "token": "100100"
+  },
+  {
+    "left_id": 5,
+    "right_id": 2,
+    "new_id": 15,
+    "token": "10100"
+  },
+  {
+    "left_id": 6,
+    "right_id": 2,
+    "new_id": 16,
+    "token": "010100"
+  },
+  {
+    "left_id": 1,
+    "right_id": 9,
+    "new_id": 17,
+    "token": "110000"
+  },
+  {
+    "left_id": 4,
+    "right_id": 7,
+    "new_id": 18,
+    "token": "10011"
+  },
+  {
+    "left_id": 8,
+    "right_id": 2,
+    "new_id": 19,
+    "token": "010000"
+  },
+  {
+    "left_id": 3,
+    "right_id": 5,
+    "new_id": 20,
+    "token": "01101"
+  },
+  {
+    "left_id": 3,
+    "right_id": 7,
+    "new_id": 21,
+    "token": "0111"
+  },
+  {
+    "left_id": 3,
+    "right_id": 10,
+    "new_id": 22,
+    "token": "011101"
+  },
+  {
+    "left_id": 3,
+    "right_id": 11,
+    "new_id": 23,
+    "token": "011100"
+  },
+  {
+    "left_id": 4,
+    "right_id": 8,
+    "new_id": 24,
+    "token": "1000100"
+  },
+  {
+    "left_id": 4,
+    "right_id": 9,
+    "new_id": 25,
+    "token": "10010000"
+  },
+  {
+    "left_id": 3,
+    "right_id": 12,
+    "new_id": 26,
+    "token": "01100101"
+  },
+  {
+    "left_id": 6,
+    "right_id": 13,
+    "new_id": 27,
+    "token": "01010000"
+  },
+  {
+    "left_id": 5,
+    "right_id": 5,
+    "new_id": 28,
+    "token": "101101"
+  },
+  {
+    "left_id": 3,
+    "right_id": 9,
+    "new_id": 29,
+    "token": "0110000"
+  },
+  {
+    "left_id": 8,
+    "right_id": 6,
+    "new_id": 30,
+    "token": "01000101"
+  },
+  {
+    "left_id": 7,
+    "right_id": 10,
+    "new_id": 31,
+    "token": "111101"
+  },
+  {
+    "left_id": 12,
+    "right_id": 2,
+    "new_id": 32,
+    "token": "10010100"
+  },
+  {
+    "left_id": 8,
+    "right_id": 8,
+    "new_id": 33,
+    "token": "01000100"
+  },
+  {
+    "left_id": 11,
+    "right_id": 6,
+    "new_id": 34,
+    "token": "11000101"
+  },
+  {
+    "left_id": 3,
+    "right_id": 17,
+    "new_id": 35,
+    "token": "01110000"
+  },
+  {
+    "left_id": 7,
+    "right_id": 9,
+    "new_id": 36,
+    "token": "1110000"
+  },
+  {
+    "left_id": 11,
+    "right_id": 8,
+    "new_id": 37,
+    "token": "11000100"
+  },
+  {
+    "left_id": 6,
+    "right_id": 6,
+    "new_id": 38,
+    "token": "01010101"
+  },
+  {
+    "left_id": 10,
+    "right_id": 9,
+    "new_id": 39,
+    "token": "110110000"
+  },
+  {
+    "left_id": 10,
+    "right_id": 2,
+    "new_id": 40,
+    "token": "110100"
+  },
+  {
+    "left_id": 7,
+    "right_id": 12,
+    "new_id": 41,
+    "token": "11100101"
+  },
+  {
+    "left_id": 11,
+    "right_id": 5,
+    "new_id": 42,
+    "token": "1100101"
+  },
+  {
+    "left_id": 4,
+    "right_id": 20,
+    "new_id": 43,
+    "token": "10001101"
+  },
+  {
+    "left_id": 10,
+    "right_id": 6,
+    "new_id": 44,
+    "token": "11010101"
+  },
+  {
+    "left_id": 4,
+    "right_id": 6,
+    "new_id": 45,
+    "token": "1000101"
+  },
+  {
+    "left_id": 8,
+    "right_id": 13,
+    "new_id": 46,
+    "token": "01000000"
+  },
+  {
+    "left_id": 9,
+    "right_id": 2,
+    "new_id": 47,
+    "token": "1000000"
+  },
+  {
+    "left_id": 14,
+    "right_id": 8,
+    "new_id": 48,
+    "token": "1001000100"
+  },
+  {
+    "left_id": 4,
+    "right_id": 3,
+    "new_id": 49,
+    "token": "10001"
+  },
+  {
+    "left_id": 7,
+    "right_id": 18,
+    "new_id": 50,
+    "token": "1110011"
+  },
+  {
+    "left_id": 10,
+    "right_id": 13,
+    "new_id": 51,
+    "token": "11010000"
+  },
+  {
+    "left_id": 22,
+    "right_id": 2,
+    "new_id": 52,
+    "token": "01110100"
+  },
+  {
+    "left_id": 15,
+    "right_id": 5,
+    "new_id": 53,
+    "token": "10100101"
+  },
+  {
+    "left_id": 10,
+    "right_id": 8,
+    "new_id": 54,
+    "token": "11010100"
+  },
+  {
+    "left_id": 23,
+    "right_id": 6,
+    "new_id": 55,
+    "token": "0111000101"
+  },
+  {
+    "left_id": 9,
+    "right_id": 5,
+    "new_id": 56,
+    "token": "10000101"
+  },
+  {
+    "left_id": 4,
+    "right_id": 11,
+    "new_id": 57,
+    "token": "1001100"
+  },
+  {
+    "left_id": 4,
+    "right_id": 12,
+    "new_id": 58,
+    "token": "100100101"
+  },
+  {
+    "left_id": 11,
+    "right_id": 11,
+    "new_id": 59,
+    "token": "11001100"
+  },
+  {
+    "left_id": 20,
+    "right_id": 5,
+    "new_id": 60,
+    "token": "01101101"
+  },
+  {
+    "left_id": 7,
+    "right_id": 11,
+    "new_id": 61,
+    "token": "111100"
+  },
+  {
+    "left_id": 8,
+    "right_id": 26,
+    "new_id": 62,
+    "token": "010001100101"
+  },
+  {
+    "left_id": 19,
+    "right_id": 6,
+    "new_id": 63,
+    "token": "0100000101"
+  },
+  {
+    "left_id": 3,
+    "right_id": 18,
+    "new_id": 64,
+    "token": "0110011"
+  },
+  {
+    "left_id": 8,
+    "right_id": 12,
+    "new_id": 65,
+    "token": "0100100101"
+  },
+  {
+    "left_id": 14,
+    "right_id": 6,
+    "new_id": 66,
+    "token": "1001000101"
+  },
+  {
+    "left_id": 5,
+    "right_id": 13,
+    "new_id": 67,
+    "token": "1010000"
+  },
+  {
+    "left_id": 2,
+    "right_id": 6,
+    "new_id": 68,
+    "token": "000101"
+  },
+  {
+    "left_id": 5,
+    "right_id": 17,
+    "new_id": 69,
+    "token": "101110000"
+  },
+  {
+    "left_id": 15,
+    "right_id": 7,
+    "new_id": 70,
+    "token": "1010011"
+  },
+  {
+    "left_id": 22,
+    "right_id": 6,
+    "new_id": 71,
+    "token": "0111010101"
+  },
+  {
+    "left_id": 4,
+    "right_id": 17,
+    "new_id": 72,
+    "token": "100110000"
+  },
+  {
+    "left_id": 21,
+    "right_id": 12,
+    "new_id": 73,
+    "token": "0111100101"
+  },
+  {
+    "left_id": 16,
+    "right_id": 6,
+    "new_id": 74,
+    "token": "0101000101"
+  },
+  {
+    "left_id": 4,
+    "right_id": 10,
+    "new_id": 75,
+    "token": "1001101"
+  },
+  {
+    "left_id": 7,
+    "right_id": 24,
+    "new_id": 76,
+    "token": "111000100"
+  },
+  {
+    "left_id": 11,
+    "right_id": 21,
+    "new_id": 77,
+    "token": "11000111"
+  },
+  {
+    "left_id": 4,
+    "right_id": 16,
+    "new_id": 78,
+    "token": "100010100"
+  },
+  {
+    "left_id": 15,
+    "right_id": 8,
+    "new_id": 79,
+    "token": "101000100"
+  },
+  {
+    "left_id": 29,
+    "right_id": 5,
+    "new_id": 80,
+    "token": "0110000101"
+  },
+  {
+    "left_id": 7,
+    "right_id": 14,
+    "new_id": 81,
+    "token": "11100100"
+  },
+  {
+    "left_id": 23,
+    "right_id": 5,
+    "new_id": 82,
+    "token": "011100101"
+  },
+  {
+    "left_id": 25,
+    "right_id": 2,
+    "new_id": 83,
+    "token": "1001000000"
+  },
+  {
+    "left_id": 3,
+    "right_id": 14,
+    "new_id": 84,
+    "token": "01100100"
+  },
+  {
+    "left_id": 60,
+    "right_id": 9,
+    "new_id": 85,
+    "token": "0110110110000"
+  },
+  {
+    "left_id": 22,
+    "right_id": 13,
+    "new_id": 86,
+    "token": "0111010000"
+  },
+  {
+    "left_id": 15,
+    "right_id": 15,
+    "new_id": 87,
+    "token": "1010010100"
+  },
+  {
+    "left_id": 16,
+    "right_id": 10,
+    "new_id": 88,
+    "token": "0101001101"
+  },
+  {
+    "left_id": 20,
+    "right_id": 9,
+    "new_id": 89,
+    "token": "0110110000"
+  },
+  {
+    "left_id": 8,
+    "right_id": 19,
+    "new_id": 90,
+    "token": "0100010000"
+  },
+  {
+    "left_id": 4,
+    "right_id": 27,
+    "new_id": 91,
+    "token": "10001010000"
+  },
+  {
+    "left_id": 3,
+    "right_id": 15,
+    "new_id": 92,
+    "token": "0110100"
+  },
+  {
+    "left_id": 24,
+    "right_id": 13,
+    "new_id": 93,
+    "token": "10001000000"
+  },
+  {
+    "left_id": 11,
+    "right_id": 10,
+    "new_id": 94,
+    "token": "11001101"
+  },
+  {
+    "left_id": 23,
+    "right_id": 19,
+    "new_id": 95,
+    "token": "011100010000"
+  },
+  {
+    "left_id": 43,
+    "right_id": 8,
+    "new_id": 96,
+    "token": "100011010100"
+  },
+  {
+    "left_id": 11,
+    "right_id": 35,
+    "new_id": 97,
+    "token": "110001110000"
+  },
+  {
+    "left_id": 21,
+    "right_id": 9,
+    "new_id": 98,
+    "token": "011110000"
+  },
+  {
+    "left_id": 29,
+    "right_id": 9,
+    "new_id": 99,
+    "token": "011000010000"
+  },
+  {
+    "left_id": 12,
+    "right_id": 13,
+    "new_id": 100,
+    "token": "1001010000"
+  },
+  {
+    "left_id": 50,
+    "right_id": 9,
+    "new_id": 101,
+    "token": "111001110000"
+  },
+  {
+    "left_id": 9,
+    "right_id": 18,
+    "new_id": 102,
+    "token": "1000010011"
+  },
+  {
+    "left_id": 7,
+    "right_id": 5,
+    "new_id": 103,
+    "token": "11101"
+  },
+  {
+    "left_id": 7,
+    "right_id": 4,
+    "new_id": 104,
+    "token": "11100"
+  },
+  {
+    "left_id": 7,
+    "right_id": 28,
+    "new_id": 105,
+    "token": "11101101"
+  },
+  {
+    "left_id": 8,
+    "right_id": 39,
+    "new_id": 106,
+    "token": "0100110110000"
+  },
+  {
+    "left_id": 16,
+    "right_id": 69,
+    "new_id": 107,
+    "token": "010100101110000"
+  },
+  {
+    "left_id": 8,
+    "right_id": 5,
+    "new_id": 108,
+    "token": "0100101"
+  },
+  {
+    "left_id": 7,
+    "right_id": 32,
+    "new_id": 109,
+    "token": "1110010100"
+  },
+  {
+    "left_id": 8,
+    "right_id": 25,
+    "new_id": 110,
+    "token": "010010010000"
+  },
+  {
+    "left_id": 7,
+    "right_id": 48,
+    "new_id": 111,
+    "token": "111001000100"
+  },
+  {
+    "left_id": 31,
+    "right_id": 2,
+    "new_id": 112,
+    "token": "11110100"
+  },
+  {
+    "left_id": 26,
+    "right_id": 2,
+    "new_id": 113,
+    "token": "0110010100"
+  },
+  {
+    "left_id": 30,
+    "right_id": 6,
+    "new_id": 114,
+    "token": "010001010101"
+  },
+  {
+    "left_id": 7,
+    "right_id": 17,
+    "new_id": 115,
+    "token": "11110000"
+  },
+  {
+    "left_id": 7,
+    "right_id": 42,
+    "new_id": 116,
+    "token": "111100101"
+  },
+  {
+    "left_id": 9,
+    "right_id": 10,
+    "new_id": 117,
+    "token": "100001101"
+  },
+  {
+    "left_id": 22,
+    "right_id": 8,
+    "new_id": 118,
+    "token": "0111010100"
+  },
+  {
+    "left_id": 35,
+    "right_id": 6,
+    "new_id": 119,
+    "token": "011100000101"
+  },
+  {
+    "left_id": 3,
+    "right_id": 4,
+    "new_id": 120,
+    "token": "01100"
+  },
+  {
+    "left_id": 46,
+    "right_id": 6,
+    "new_id": 121,
+    "token": "010000000101"
+  },
+  {
+    "left_id": 8,
+    "right_id": 14,
+    "new_id": 122,
+    "token": "0100100100"
+  },
+  {
+    "left_id": 40,
+    "right_id": 6,
+    "new_id": 123,
+    "token": "1101000101"
+  },
+  {
+    "left_id": 11,
+    "right_id": 16,
+    "new_id": 124,
+    "token": "1100010100"
+  },
+  {
+    "left_id": 20,
+    "right_id": 6,
+    "new_id": 125,
+    "token": "011010101"
+  },
+  {
+    "left_id": 3,
+    "right_id": 24,
+    "new_id": 126,
+    "token": "011000100"
+  },
+  {
+    "left_id": 78,
+    "right_id": 12,
+    "new_id": 127,
+    "token": "100010100100101"
+  },
+  {
+    "left_id": 8,
+    "right_id": 16,
+    "new_id": 128,
+    "token": "0100010100"
+  },
+  {
+    "left_id": 11,
+    "right_id": 19,
+    "new_id": 129,
+    "token": "1100010000"
+  },
+  {
+    "left_id": 5,
+    "right_id": 15,
+    "new_id": 130,
+    "token": "10110100"
+  },
+  {
+    "left_id": 20,
+    "right_id": 13,
+    "new_id": 131,
+    "token": "011010000"
+  },
+  {
+    "left_id": 13,
+    "right_id": 2,
+    "new_id": 132,
+    "token": "000000"
+  },
+  {
+    "left_id": 36,
+    "right_id": 6,
+    "new_id": 133,
+    "token": "11100000101"
+  },
+  {
+    "left_id": 7,
+    "right_id": 31,
+    "new_id": 134,
+    "token": "11111101"
+  },
+  {
+    "left_id": 17,
+    "right_id": 6,
+    "new_id": 135,
+    "token": "1100000101"
+  },
+  {
+    "left_id": 38,
+    "right_id": 6,
+    "new_id": 136,
+    "token": "010101010101"
+  },
+  {
+    "left_id": 9,
+    "right_id": 9,
+    "new_id": 137,
+    "token": "1000010000"
+  },
+  {
+    "left_id": 18,
+    "right_id": 79,
+    "new_id": 138,
+    "token": "10011101000100"
+  },
+  {
+    "left_id": 49,
+    "right_id": 24,
+    "new_id": 139,
+    "token": "100011000100"
+  },
+  {
+    "left_id": 21,
+    "right_id": 10,
+    "new_id": 140,
+    "token": "01111101"
+  },
+  {
+    "left_id": 35,
+    "right_id": 5,
+    "new_id": 141,
+    "token": "01110000101"
+  },
+  {
+    "left_id": 14,
+    "right_id": 9,
+    "new_id": 142,
+    "token": "10010010000"
+  },
+  {
+    "left_id": 10,
+    "right_id": 19,
+    "new_id": 143,
+    "token": "1101010000"
+  },
+  {
+    "left_id": 57,
+    "right_id": 107,
+    "new_id": 144,
+    "token": "1001100010100101110000"
+  },
+  {
+    "left_id": 33,
+    "right_id": 12,
+    "new_id": 145,
+    "token": "01000100100101"
+  },
+  {
+    "left_id": 18,
+    "right_id": 5,
+    "new_id": 146,
+    "token": "10011101"
+  },
+  {
+    "left_id": 40,
+    "right_id": 19,
+    "new_id": 147,
+    "token": "110100010000"
+  },
+  {
+    "left_id": 37,
+    "right_id": 12,
+    "new_id": 148,
+    "token": "11000100100101"
+  },
+  {
+    "left_id": 11,
+    "right_id": 27,
+    "new_id": 149,
+    "token": "110001010000"
+  },
+  {
+    "left_id": 37,
+    "right_id": 13,
+    "new_id": 150,
+    "token": "110001000000"
+  },
+  {
+    "left_id": 23,
+    "right_id": 16,
+    "new_id": 151,
+    "token": "011100010100"
+  },
+  {
+    "left_id": 21,
+    "right_id": 7,
+    "new_id": 152,
+    "token": "011111"
+  },
+  {
+    "left_id": 4,
+    "right_id": 19,
+    "new_id": 153,
+    "token": "100010000"
+  },
+  {
+    "left_id": 53,
+    "right_id": 16,
+    "new_id": 154,
+    "token": "10100101010100"
+  },
+  {
+    "left_id": 3,
+    "right_id": 25,
+    "new_id": 155,
+    "token": "0110010000"
+  },
+  {
+    "left_id": 62,
+    "right_id": 76,
+    "new_id": 156,
+    "token": "010001100101111000100"
+  },
+  {
+    "left_id": 87,
+    "right_id": 39,
+    "new_id": 157,
+    "token": "1010010100110110000"
+  },
+  {
+    "left_id": 10,
+    "right_id": 5,
+    "new_id": 158,
+    "token": "1101101"
+  },
+  {
+    "left_id": 52,
+    "right_id": 8,
+    "new_id": 159,
+    "token": "011101000100"
+  },
+  {
+    "left_id": 7,
+    "right_id": 25,
+    "new_id": 160,
+    "token": "1110010000"
+  },
+  {
+    "left_id": 10,
+    "right_id": 27,
+    "new_id": 161,
+    "token": "110101010000"
+  },
+  {
+    "left_id": 56,
+    "right_id": 55,
+    "new_id": 162,
+    "token": "100001010111000101"
+  },
+  {
+    "left_id": 24,
+    "right_id": 6,
+    "new_id": 163,
+    "token": "10001000101"
+  },
+  {
+    "left_id": 4,
+    "right_id": 32,
+    "new_id": 164,
+    "token": "10010010100"
+  },
+  {
+    "left_id": 11,
+    "right_id": 12,
+    "new_id": 165,
+    "token": "1100100101"
+  },
+  {
+    "left_id": 35,
+    "right_id": 19,
+    "new_id": 166,
+    "token": "01110000010000"
+  },
+  {
+    "left_id": 27,
+    "right_id": 6,
+    "new_id": 167,
+    "token": "010100000101"
+  },
+  {
+    "left_id": 11,
+    "right_id": 22,
+    "new_id": 168,
+    "token": "1100011101"
+  },
+  {
+    "left_id": 20,
+    "right_id": 17,
+    "new_id": 169,
+    "token": "01101110000"
+  },
+  {
+    "left_id": 18,
+    "right_id": 14,
+    "new_id": 170,
+    "token": "10011100100"
+  },
+  {
+    "left_id": 97,
+    "right_id": 141,
+    "new_id": 171,
+    "token": "11000111000001110000101"
+  },
+  {
+    "left_id": 24,
+    "right_id": 5,
+    "new_id": 172,
+    "token": "1000100101"
+  },
+  {
+    "left_id": 49,
+    "right_id": 14,
+    "new_id": 173,
+    "token": "10001100100"
+  },
+  {
+    "left_id": 8,
+    "right_id": 15,
+    "new_id": 174,
+    "token": "010010100"
+  },
+  {
+    "left_id": 28,
+    "right_id": 9,
+    "new_id": 175,
+    "token": "10110110000"
+  },
+  {
+    "left_id": 3,
+    "right_id": 45,
+    "new_id": 176,
+    "token": "011000101"
+  },
+  {
+    "left_id": 26,
+    "right_id": 13,
+    "new_id": 177,
+    "token": "011001010000"
+  },
+  {
+    "left_id": 28,
+    "right_id": 5,
+    "new_id": 178,
+    "token": "101101101"
+  },
+  {
+    "left_id": 28,
+    "right_id": 29,
+    "new_id": 179,
+    "token": "1011010110000"
+  },
+  {
+    "left_id": 8,
+    "right_id": 32,
+    "new_id": 180,
+    "token": "010010010100"
+  },
+  {
+    "left_id": 70,
+    "right_id": 41,
+    "new_id": 181,
+    "token": "101001111100101"
+  },
+  {
+    "left_id": 62,
+    "right_id": 162,
+    "new_id": 182,
+    "token": "010001100101100001010111000101"
+  },
+  {
+    "left_id": 66,
+    "right_id": 154,
+    "new_id": 183,
+    "token": "100100010110100101010100"
+  },
+  {
+    "left_id": 3,
+    "right_id": 58,
+    "new_id": 184,
+    "token": "01100100101"
+  },
+  {
+    "left_id": 34,
+    "right_id": 15,
+    "new_id": 185,
+    "token": "1100010110100"
+  },
+  {
+    "left_id": 27,
+    "right_id": 2,
+    "new_id": 186,
+    "token": "0101000000"
+  },
+  {
+    "left_id": 96,
+    "right_id": 144,
+    "new_id": 187,
+    "token": "1000110101001001100010100101110000"
+  },
+  {
+    "left_id": 156,
+    "right_id": 43,
+    "new_id": 188,
+    "token": "01000110010111100010010001101"
+  },
+  {
+    "left_id": 127,
+    "right_id": 85,
+    "new_id": 189,
+    "token": "1000101001001010110110110000"
+  },
+  {
+    "left_id": 8,
+    "right_id": 18,
+    "new_id": 190,
+    "token": "010010011"
+  },
+  {
+    "left_id": 52,
+    "right_id": 19,
+    "new_id": 191,
+    "token": "01110100010000"
+  },
+  {
+    "left_id": 21,
+    "right_id": 11,
+    "new_id": 192,
+    "token": "01111100"
+  },
+  {
+    "left_id": 25,
+    "right_id": 12,
+    "new_id": 193,
+    "token": "10010000100101"
+  },
+  {
+    "left_id": 8,
+    "right_id": 10,
+    "new_id": 194,
+    "token": "01001101"
+  },
+  {
+    "left_id": 28,
+    "right_id": 13,
+    "new_id": 195,
+    "token": "1011010000"
+  },
+  {
+    "left_id": 9,
+    "right_id": 12,
+    "new_id": 196,
+    "token": "10000100101"
+  },
+  {
+    "left_id": 14,
+    "right_id": 19,
+    "new_id": 197,
+    "token": "100100010000"
+  },
+  {
+    "left_id": 36,
+    "right_id": 14,
+    "new_id": 198,
+    "token": "1110000100100"
+  },
+  {
+    "left_id": 3,
+    "right_id": 48,
+    "new_id": 199,
+    "token": "011001000100"
+  },
+  {
+    "left_id": 50,
+    "right_id": 31,
+    "new_id": 200,
+    "token": "1110011111101"
+  },
+  {
+    "left_id": 31,
+    "right_id": 6,
+    "new_id": 201,
+    "token": "1111010101"
+  },
+  {
+    "left_id": 7,
+    "right_id": 15,
+    "new_id": 202,
+    "token": "1110100"
+  },
+  {
+    "left_id": 16,
+    "right_id": 51,
+    "new_id": 203,
+    "token": "01010011010000"
+  },
+  {
+    "left_id": 19,
+    "right_id": 12,
+    "new_id": 204,
+    "token": "010000100101"
+  },
+  {
+    "left_id": 24,
+    "right_id": 9,
+    "new_id": 205,
+    "token": "100010010000"
+  },
+  {
+    "left_id": 14,
+    "right_id": 30,
+    "new_id": 206,
+    "token": "10010001000101"
+  },
+  {
+    "left_id": 15,
+    "right_id": 10,
+    "new_id": 207,
+    "token": "101001101"
+  },
+  {
+    "left_id": 4,
+    "right_id": 42,
+    "new_id": 208,
+    "token": "1001100101"
+  },
+  {
+    "left_id": 4,
+    "right_id": 51,
+    "new_id": 209,
+    "token": "10011010000"
+  },
+  {
+    "left_id": 21,
+    "right_id": 5,
+    "new_id": 210,
+    "token": "0111101"
+  },
+  {
+    "left_id": 16,
+    "right_id": 11,
+    "new_id": 211,
+    "token": "0101001100"
+  },
+  {
+    "left_id": 3,
+    "right_id": 53,
+    "new_id": 212,
+    "token": "0110100101"
+  },
+  {
+    "left_id": 9,
+    "right_id": 14,
+    "new_id": 213,
+    "token": "10000100100"
+  },
+  {
+    "left_id": 13,
+    "right_id": 6,
+    "new_id": 214,
+    "token": "00000101"
+  },
+  {
+    "left_id": 7,
+    "right_id": 83,
+    "new_id": 215,
+    "token": "111001000000"
+  },
+  {
+    "left_id": 22,
+    "right_id": 29,
+    "new_id": 216,
+    "token": "0111010110000"
+  },
+  {
+    "left_id": 31,
+    "right_id": 89,
+    "new_id": 217,
+    "token": "1111010110110000"
+  },
+  {
+    "left_id": 117,
+    "right_id": 33,
+    "new_id": 218,
+    "token": "10000110101000100"
+  },
+  {
+    "left_id": 20,
+    "right_id": 37,
+    "new_id": 219,
+    "token": "0110111000100"
+  },
+  {
+    "left_id": 16,
+    "right_id": 19,
+    "new_id": 220,
+    "token": "010100010000"
+  },
+  {
+    "left_id": 46,
+    "right_id": 39,
+    "new_id": 221,
+    "token": "01000000110110000"
+  },
+  {
+    "left_id": 15,
+    "right_id": 18,
+    "new_id": 222,
+    "token": "1010010011"
+  },
+  {
+    "left_id": 38,
+    "right_id": 137,
+    "new_id": 223,
+    "token": "010101011000010000"
+  },
+  {
+    "left_id": 16,
+    "right_id": 5,
+    "new_id": 224,
+    "token": "010100101"
+  },
+  {
+    "left_id": 29,
+    "right_id": 12,
+    "new_id": 225,
+    "token": "0110000100101"
+  },
+  {
+    "left_id": 27,
+    "right_id": 68,
+    "new_id": 226,
+    "token": "01010000000101"
+  },
+  {
+    "left_id": 77,
+    "right_id": 9,
+    "new_id": 227,
+    "token": "1100011110000"
+  },
+  {
+    "left_id": 12,
+    "right_id": 6,
+    "new_id": 228,
+    "token": "1001010101"
+  },
+  {
+    "left_id": 44,
+    "right_id": 5,
+    "new_id": 229,
+    "token": "11010101101"
+  },
+  {
+    "left_id": 18,
+    "right_id": 9,
+    "new_id": 230,
+    "token": "1001110000"
+  },
+  {
+    "left_id": 8,
+    "right_id": 30,
+    "new_id": 231,
+    "token": "010001000101"
+  },
+  {
+    "left_id": 72,
+    "right_id": 12,
+    "new_id": 232,
+    "token": "100110000100101"
+  },
+  {
+    "left_id": 59,
+    "right_id": 11,
+    "new_id": 233,
+    "token": "110011001100"
+  },
+  {
+    "left_id": 88,
+    "right_id": 29,
+    "new_id": 234,
+    "token": "01010011010110000"
+  },
+  {
+    "left_id": 18,
+    "right_id": 40,
+    "new_id": 235,
+    "token": "10011110100"
+  },
+  {
+    "left_id": 47,
+    "right_id": 6,
+    "new_id": 236,
+    "token": "10000000101"
+  },
+  {
+    "left_id": 31,
+    "right_id": 13,
+    "new_id": 237,
+    "token": "1111010000"
+  },
+  {
+    "left_id": 32,
+    "right_id": 6,
+    "new_id": 238,
+    "token": "100101000101"
+  },
+  {
+    "left_id": 54,
+    "right_id": 5,
+    "new_id": 239,
+    "token": "11010100101"
+  },
+  {
+    "left_id": 11,
+    "right_id": 33,
+    "new_id": 240,
+    "token": "110001000100"
+  },
+  {
+    "left_id": 23,
+    "right_id": 63,
+    "new_id": 241,
+    "token": "0111000100000101"
+  },
+  {
+    "left_id": 26,
+    "right_id": 6,
+    "new_id": 242,
+    "token": "011001010101"
+  },
+  {
+    "left_id": 54,
+    "right_id": 10,
+    "new_id": 243,
+    "token": "110101001101"
+  },
+  {
+    "left_id": 22,
+    "right_id": 27,
+    "new_id": 244,
+    "token": "01110101010000"
+  },
+  {
+    "left_id": 4,
+    "right_id": 34,
+    "new_id": 245,
+    "token": "10011000101"
+  },
+  {
+    "left_id": 171,
+    "right_id": 95,
+    "new_id": 246,
+    "token": "11000111000001110000101011100010000"
+  },
+  {
+    "left_id": 32,
+    "right_id": 10,
+    "new_id": 247,
+    "token": "100101001101"
+  },
+  {
+    "left_id": 4,
+    "right_id": 37,
+    "new_id": 248,
+    "token": "10011000100"
+  },
+  {
+    "left_id": 7,
+    "right_id": 43,
+    "new_id": 249,
+    "token": "1110001101"
+  },
+  {
+    "left_id": 41,
+    "right_id": 13,
+    "new_id": 250,
+    "token": "111001010000"
+  },
+  {
+    "left_id": 25,
+    "right_id": 5,
+    "new_id": 251,
+    "token": "10010000101"
+  },
+  {
+    "left_id": 21,
+    "right_id": 14,
+    "new_id": 252,
+    "token": "0111100100"
+  },
+  {
+    "left_id": 28,
+    "right_id": 6,
+    "new_id": 253,
+    "token": "1011010101"
+  },
+  {
+    "left_id": 210,
+    "right_id": 89,
+    "new_id": 254,
+    "token": "01111010110110000"
+  },
+  {
+    "left_id": 49,
+    "right_id": 18,
+    "new_id": 255,
+    "token": "1000110011"
+  }
+]
