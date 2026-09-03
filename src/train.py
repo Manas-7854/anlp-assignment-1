@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import argparse
+import json
 import math
 import random
 from pathlib import Path
@@ -55,10 +56,13 @@ BASE_CONFIG = {
     "num_kv_heads": 2,
     "d_ff": 1024,
     "dropout": 0.1,
-    "batch_size": 8,
+    "batch_size": 2,
     "learning_rate": 3e-4,
+    "min_learning_rate": 1e-5,
+    "warmup_ratio": 0.05,
     "weight_decay": 0.01,
     "gradient_clip": 1.0,
+    "fp16": True,
     "epochs": 20,
     "max_seq_length": 4096,
     "max_decode_length": 4096,
@@ -72,6 +76,7 @@ BASE_CONFIG = {
     "wandb_project": "anlp-assignment-1",
     "wandb_mode": "online",
     "evaluate_test": False,
+    "overfit_examples": 0,
     "plain_path": str(PLAIN_PATH),
     "cipher_path": str(CIPHER_PATH),
     "merge_rules_path": str(MERGE_RULES_PATH),
@@ -129,6 +134,17 @@ class FeedForward(nn.Module):
         x = self.input_projection(x)
         x = self.dropout(self.activation(x))
         return self.output_projection(x)
+
+
+def _initialize_embedding(
+    embedding: nn.Embedding, d_model: int, padding_idx: int | None
+) -> None:
+    """Initialize embeddings so scaling by sqrt(d_model) gives unit variance."""
+
+    nn.init.normal_(embedding.weight, mean=0.0, std=d_model**-0.5)
+    if padding_idx is not None:
+        with torch.no_grad():
+            embedding.weight[padding_idx].zero_()
 
 
 class EncoderBlock(nn.Module):
@@ -206,6 +222,7 @@ class Encoder(nn.Module):
         self.embedding = nn.Embedding(
             vocab_size, self.d_model, padding_idx=padding_idx
         )
+        _initialize_embedding(self.embedding, self.d_model, padding_idx)
         self.position = (
             SinusoidalPositionalEncoding(
                 self.d_model, config["max_seq_length"]
@@ -301,6 +318,7 @@ class Decoder(nn.Module):
         self.embedding = nn.Embedding(
             vocab_size, self.d_model, padding_idx=padding_idx
         )
+        _initialize_embedding(self.embedding, self.d_model, padding_idx)
         self.position = (
             SinusoidalPositionalEncoding(
                 self.d_model, config["max_seq_length"]
@@ -314,9 +332,7 @@ class Decoder(nn.Module):
                 DecoderBlock(
                     self.d_model,
                     _make_attention(config),
-                    # Encoder/decoder positions use different coordinate systems,
-                    # so cross-attention does not apply one shared rotary frame.
-                    _make_attention(config, use_rope=False),
+                    _make_attention(config),
                     norm_class,
                     config["d_ff"],
                     config["dropout"],
@@ -586,12 +602,15 @@ def train_one_epoch(
     model: nn.Module,
     dataloader: DataLoader,
     optimizer: torch.optim.Optimizer,
+    scheduler: torch.optim.lr_scheduler.LRScheduler,
+    scaler: torch.amp.GradScaler,
     device: torch.device,
     target_pad_id: int,
     gradient_clip: float,
     run,
     global_step: int,
     log_every: int,
+    use_fp16: bool,
 ) -> tuple[float, int, int]:
     model.train()
     total_loss = 0.0
@@ -601,12 +620,20 @@ def train_one_epoch(
     progress_every = max(1, total_batches // 4)
     for batch_number, batch in enumerate(dataloader, start=1):
         optimizer.zero_grad(set_to_none=True)
-        loss, token_count, _ = compute_batch_loss(
-            model, batch, device, target_pad_id
-        )
-        loss.backward()
+        with torch.autocast(
+            device_type=device.type, dtype=torch.float16, enabled=use_fp16
+        ):
+            loss, token_count, _ = compute_batch_loss(
+                model, batch, device, target_pad_id
+            )
+        scaler.scale(loss).backward()
+        scaler.unscale_(optimizer)
         nn.utils.clip_grad_norm_(model.parameters(), gradient_clip)
-        optimizer.step()
+        scale_before_update = scaler.get_scale()
+        scaler.step(optimizer)
+        scaler.update()
+        if scaler.get_scale() >= scale_before_update:
+            scheduler.step()
 
         total_loss += float(loss.item()) * token_count
         total_tokens += token_count
@@ -632,6 +659,7 @@ def validate(
     dataloader: DataLoader,
     device: torch.device,
     target_pad_id: int,
+    use_fp16: bool,
 ) -> tuple[float, float]:
     model.eval()
     total_loss = 0.0
@@ -639,9 +667,12 @@ def validate(
     correct_tokens = 0
 
     for batch in dataloader:
-        loss, token_count, correct = compute_batch_loss(
-            model, batch, device, target_pad_id
-        )
+        with torch.autocast(
+            device_type=device.type, dtype=torch.float16, enabled=use_fp16
+        ):
+            loss, token_count, correct = compute_batch_loss(
+                model, batch, device, target_pad_id
+            )
         total_loss += float(loss.item()) * token_count
         total_tokens += token_count
         correct_tokens += correct
@@ -659,9 +690,15 @@ def greedy_decode(
     max_length: int,
 ) -> torch.Tensor:
     model.eval()
-    memory, memory_padding_mask = model.encode_source(
-        source_tokens, source_padding_mask
-    )
+    use_fp16 = source_tokens.device.type == "cuda"
+    with torch.autocast(
+        device_type=source_tokens.device.type,
+        dtype=torch.float16,
+        enabled=use_fp16,
+    ):
+        memory, memory_padding_mask = model.encode_source(
+            source_tokens, source_padding_mask
+        )
     generated = torch.full(
         (source_tokens.size(0), 1),
         bos_token_id,
@@ -673,13 +710,18 @@ def greedy_decode(
     )
 
     for _ in range(max_length - 1):
-        logits = model.decode_from_memory(
-            generated,
-            memory,
-            memory_padding_mask,
-            torch.zeros_like(generated, dtype=torch.bool),
-        )
-        next_token = logits[:, -1].argmax(dim=-1)
+        with torch.autocast(
+            device_type=source_tokens.device.type,
+            dtype=torch.float16,
+            enabled=use_fp16,
+        ):
+            logits = model.decode_from_memory(
+                generated,
+                memory,
+                memory_padding_mask,
+                torch.zeros_like(generated, dtype=torch.bool),
+            )
+            next_token = logits[:, -1].argmax(dim=-1)
         next_token = torch.where(
             finished, torch.full_like(next_token, eos_token_id), next_token
         )
@@ -697,6 +739,7 @@ def evaluate_model(
     device: torch.device,
     target_codec: PlaintextCodec | ByteCodec,
     max_length: int,
+    include_tokenized_metrics: bool,
 ) -> dict[str, float]:
     predictions: list[str] = []
     targets: list[str] = []
@@ -720,7 +763,30 @@ def evaluate_model(
             target_codec.decode(row.tolist())
             for row in batch["target_tokens"]
         )
-    return compute_evaluation_metrics(predictions, targets)
+    return compute_evaluation_metrics(
+        predictions,
+        targets,
+        include_tokenized_metrics=include_tokenized_metrics,
+    )
+
+
+def dataset_statistics(loaders: dict[str, DataLoader]) -> dict[str, Any]:
+    """Return auditable split sizes and encoded sequence-length ranges."""
+
+    statistics: dict[str, Any] = {}
+    for split_name, loader in loaders.items():
+        examples = loader.dataset.examples
+        source_lengths = [int(source.numel()) for source, _ in examples]
+        target_lengths = [int(target.numel()) for _, target in examples]
+        statistics[split_name] = {
+            "examples": len(examples),
+            "batches_per_epoch": len(loader),
+            "source_min_length": min(source_lengths) if source_lengths else 0,
+            "source_max_length": max(source_lengths) if source_lengths else 0,
+            "target_min_length": min(target_lengths) if target_lengths else 0,
+            "target_max_length": max(target_lengths) if target_lengths else 0,
+        }
+    return statistics
 
 
 def _resolve_device(requested: str) -> torch.device:
@@ -739,6 +805,31 @@ def _set_seed(seed: int) -> None:
         torch.cuda.manual_seed_all(seed)
 
 
+def build_lr_scheduler(
+    optimizer: torch.optim.Optimizer,
+    total_steps: int,
+    warmup_ratio: float,
+    min_learning_rate: float,
+) -> tuple[torch.optim.lr_scheduler.LambdaLR, int]:
+    """Create a linear-warmup then cosine-decay per-step LR schedule."""
+
+    if total_steps <= 0:
+        raise ValueError("total_steps must be positive.")
+    base_learning_rate = optimizer.param_groups[0]["lr"]
+    minimum_ratio = min_learning_rate / base_learning_rate
+    warmup_steps = min(total_steps, round(total_steps * warmup_ratio))
+    decay_steps = max(1, total_steps - warmup_steps)
+
+    def multiplier(step: int) -> float:
+        if warmup_steps > 0 and step < warmup_steps:
+            return (step + 1) / warmup_steps
+        progress = min(1.0, max(0.0, (step - warmup_steps) / decay_steps))
+        cosine = 0.5 * (1.0 + math.cos(math.pi * progress))
+        return minimum_ratio + (1.0 - minimum_ratio) * cosine
+
+    return torch.optim.lr_scheduler.LambdaLR(optimizer, multiplier), warmup_steps
+
+
 def run_training(
     config_name: str, overrides: dict[str, Any] | None = None
 ) -> dict[str, float]:
@@ -752,15 +843,28 @@ def run_training(
         config["max_decode_length"] = config["max_seq_length"]
     if config["epochs"] <= 0 or config["batch_size"] <= 0:
         raise ValueError("epochs and batch_size must be positive.")
+    if not 0.0 <= config["min_learning_rate"] <= config["learning_rate"]:
+        raise ValueError(
+            "min_learning_rate must be between zero and learning_rate."
+        )
+    if not 0.0 <= config["warmup_ratio"] < 1.0:
+        raise ValueError("warmup_ratio must be in [0, 1).")
+    if config["overfit_examples"] < 0:
+        raise ValueError("overfit_examples cannot be negative.")
     if config["max_decode_length"] > config["max_seq_length"]:
         raise ValueError("max_decode_length cannot exceed max_seq_length.")
 
     device = _resolve_device(config["device"])
     config["device"] = str(device)
+    use_fp16 = bool(config["fp16"] and device.type == "cuda")
     _set_seed(config["seed"])
     print(
         f"Starting {config['name']} on {device} "
         f"({config['epochs']} epochs, batch size {config['batch_size']})",
+        flush=True,
+    )
+    print(
+        f"Precision: {'FP16 mixed precision' if use_fp16 else 'FP32'}",
         flush=True,
     )
 
@@ -775,6 +879,7 @@ def run_training(
         "max_seq_length": config["max_seq_length"],
         "num_workers": config["num_workers"],
         "pin_memory": device.type == "cuda",
+        "overfit_examples": config["overfit_examples"],
     }
     print("Loading and encoding dataset splits...", flush=True)
     if config["tokenization"] == "blt":
@@ -782,6 +887,8 @@ def run_training(
             **data_arguments
         )
         model = BLTSeq2SeqTransformer(config)
+        config["source_vocab_size"] = ByteCodec.vocabulary_size
+        config["target_vocab_size"] = ByteCodec.vocabulary_size
     else:
         print("Loading frozen BPE tokenizer...", flush=True)
         source_tokenizer = BinaryBPE.load(Path(config["merge_rules_path"]))
@@ -795,17 +902,45 @@ def run_training(
             source_pad_id,
             target_codec.PAD,
         )
+        config["source_vocab_size"] = len(source_tokenizer.vocabulary) + 1
+        config["target_vocab_size"] = target_codec.vocabulary_size
+    if config["overfit_examples"]:
+        example_count = len(loaders["train"].dataset)
+        config["name"] = f"{config['name']}_overfit_{example_count}"
+        config["evaluate_test"] = False
+        print(
+            f"Overfit diagnostic: training and validating on the same "
+            f"{example_count} examples.",
+            flush=True,
+        )
     print(
         "Dataset ready: "
         + ", ".join(f"{name}={len(loader.dataset)}" for name, loader in loaders.items()),
         flush=True,
     )
+    config["dataset_statistics"] = dataset_statistics(loaders)
     print("Building model and optimizer...", flush=True)
     model = model.to(device)
     optimizer = torch.optim.AdamW(
         model.parameters(),
         lr=config["learning_rate"],
         weight_decay=config["weight_decay"],
+    )
+    scaler = torch.amp.GradScaler("cuda", enabled=use_fp16)
+    total_training_steps = config["epochs"] * len(loaders["train"])
+    scheduler, warmup_steps = build_lr_scheduler(
+        optimizer,
+        total_training_steps,
+        config["warmup_ratio"],
+        config["min_learning_rate"],
+    )
+    print(
+        "Learning-rate schedule: linear warmup + cosine decay; "
+        f"{warmup_steps} warmup steps, peak {config['learning_rate']:.2e}, "
+        f"minimum "
+        f"{config['min_learning_rate']:.2e} over "
+        f"{total_training_steps} steps",
+        flush=True,
     )
     parameter_count = sum(parameter.numel() for parameter in model.parameters())
     config["parameter_count"] = parameter_count
@@ -841,12 +976,15 @@ def run_training(
             model,
             loaders["train"],
             optimizer,
+            scheduler,
+            scaler,
             device,
             target_codec.PAD,
             config["gradient_clip"],
             run,
             global_step,
             config["log_every"],
+            use_fp16,
         )
         training_epoch_seconds = elapsed_seconds(training_epoch_started)
         print(f"Epoch {epoch}/{config['epochs']}: validating...", flush=True)
@@ -855,6 +993,7 @@ def run_training(
             loaders["validation"],
             device,
             target_codec.PAD,
+            use_fp16,
         )
         latest_validation_loss = validation_loss
         epoch_seconds = elapsed_seconds(epoch_started)
@@ -918,18 +1057,46 @@ def run_training(
         "gpu_peak_memory_mb": training_peak_memory,
     }
     if config["evaluate_test"]:
-        load_checkpoint(best_path, model, device=device)
+        best_checkpoint = load_checkpoint(best_path, model, device=device)
+        test_loss, test_token_accuracy = validate(
+            model,
+            loaders["test"],
+            device,
+            target_codec.PAD,
+            use_fp16,
+        )
         test_metrics = evaluate_model(
             model,
             loaders["test"],
             device,
             target_codec,
             config["max_decode_length"],
+            include_tokenized_metrics=config["tokenization"] == "bpe",
         )
+        test_metrics["loss"] = test_loss
+        test_metrics["token_accuracy"] = test_token_accuracy
         test_metrics["training_time_seconds"] = training_seconds
         test_metrics["gpu_peak_memory_mb"] = training_peak_memory
         log_final_evaluation(run, test_metrics)
         results.update(test_metrics)
+        metrics_path = (
+            Path(config["output_dir"])
+            / "metrics"
+            / f"{config['name']}_test_metrics.json"
+        )
+        metrics_path.parent.mkdir(parents=True, exist_ok=True)
+        metrics_payload = {
+            "configuration": config["name"],
+            "evaluation": "best validation checkpoint; greedy decoding",
+            "best_checkpoint_epoch": best_checkpoint["epoch"],
+            "test_metrics": test_metrics,
+            "hyperparameters": config,
+        }
+        metrics_path.write_text(
+            json.dumps(metrics_payload, indent=2, sort_keys=True) + "\n",
+            encoding="utf-8",
+        )
+        print(f"Saved final test metrics to {metrics_path}")
         print("Final test metrics:")
         for name, value in test_metrics.items():
             print(f"  {name}: {value:.6f}")
@@ -946,6 +1113,11 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--epochs", type=int)
     parser.add_argument("--batch-size", type=int)
     parser.add_argument("--learning-rate", type=float)
+    parser.add_argument("--min-learning-rate", type=float)
+    parser.add_argument("--warmup-ratio", type=float)
+    parser.add_argument(
+        "--fp16", action=argparse.BooleanOptionalAction, default=None
+    )
     parser.add_argument("--max-seq-length", type=int)
     parser.add_argument("--max-decode-length", type=int)
     parser.add_argument("--num-workers", type=int)
@@ -955,6 +1127,7 @@ def parse_args() -> argparse.Namespace:
         "--wandb-mode", choices=("online", "offline", "disabled")
     )
     parser.add_argument("--evaluate-test", action="store_true")
+    parser.add_argument("--overfit-examples", type=int)
     parser.add_argument("--plain-path", type=Path)
     parser.add_argument("--cipher-path", type=Path)
     parser.add_argument("--merge-rules-path", type=Path)

@@ -1,0 +1,141 @@
+WandB initialized. Starting training...
+Epoch 1/20: training...
+  training: batch 500/2000
+  training: batch 1000/2000
+  training: batch 1500/2000
+  training: batch 2000/2000
+Epoch 1/20: validating...
+epoch 001 | train 2.2578 | validation 2.0341 | token accuracy 0.3982 | 12263 tokens/s
+Epoch 2/20: training...
+  training: batch 500/2000
+  training: batch 1000/2000
+  training: batch 1500/2000
+  training: batch 2000/2000
+Epoch 2/20: validating...
+epoch 002 | train 1.9901 | validation 1.8722 | token accuracy 0.4484 | 12833 tokens/s
+Epoch 3/20: training...
+  training: batch 500/2000
+  training: batch 1000/2000
+  training: batch 1500/2000
+  training: batch 2000/2000
+Epoch 3/20: validating...
+epoch 003 | train 1.8706 | validation 1.7732 | token accuracy 0.4783 | 12823 tokens/s
+Epoch 4/20: training...
+  training: batch 500/2000
+  training: batch 1000/2000
+  training: batch 1500/2000
+  training: batch 2000/2000
+Epoch 4/20: validating...
+epoch 004 | train 1.7824 | validation 1.6941 | token accuracy 0.5003 | 12819 tokens/s
+Epoch 5/20: training...
+  training: batch 500/2000
+  training: batch 1000/2000
+  training: batch 1500/2000
+  training: batch 2000/2000
+Epoch 5/20: validating...
+epoch 005 | train 1.7160 | validation 1.6267 | token accuracy 0.5218 | 12823 tokens/s
+Epoch 6/20: training...
+  training: batch 500/2000
+  training: batch 1000/2000
+  training: batch 1500/2000
+  training: batch 2000/2000
+Epoch 6/20: validating...
+epoch 006 | train 1.6634 | validation 1.5780 | token accuracy 0.5346 | 12825 tokens/s
+Epoch 7/20: training...
+  training: batch 500/2000
+  training: batch 1000/2000
+  training: batch 1500/2000
+  training: batch 2000/2000
+Epoch 7/20: validating...
+epoch 007 | train 1.6221 | validation 1.5478 | token accuracy 0.5423 | 12823 tokens/s
+Epoch 8/20: training...
+  training: batch 500/2000
+  training: batch 1000/2000
+  training: batch 1500/2000
+  training: batch 2000/2000
+Epoch 8/20: validating...
+epoch 008 | train 1.5871 | validation 1.5159 | token accuracy 0.5524 | 12823 tokens/s
+Epoch 9/20: training...
+  training: batch 500/2000
+  training: batch 1000/2000
+  training: batch 1500/2000
+  training: batch 2000/2000
+Epoch 9/20: validating...
+epoch 009 | train 1.5585 | validation 1.4943 | token accuracy 0.5582 | 12823 tokens/s
+Epoch 10/20: training...
+  training: batch 500/2000
+  training: batch 1000/2000
+  training: batch 1500/2000
+  training: batch 2000/2000
+Epoch 10/20: validating...
+epoch 010 | train 1.5336 | validation 1.4771 | token accuracy 0.5628 | 12821 tokens/s
+Epoch 11/20: training...
+  training: batch 500/2000
+  training: batch 1000/2000
+  training: batch 1500/2000
+  training: batch 2000/2000
+Epoch 11/20: validating...
+epoch 011 | train 1.5129 | validation 1.4671 | token accuracy 0.5663 | 12823 tokens/s
+Epoch 12/20: training...
+  training: batch 500/2000
+  training: batch 1000/2000
+  training: batch 1500/2000
+  training: batch 2000/2000
+Epoch 12/20: validating...
+epoch 012 | train 1.4951 | validation 1.4517 | token accuracy 0.5702 | 12822 tokens/s
+Epoch 13/20: training...
+  training: batch 500/2000
+  training: batch 1000/2000
+  training: batch 1500/2000
+  training: batch 2000/2000
+Epoch 13/20: validating...
+epoch 013 | train 1.4795 | validation 1.4421 | token accuracy 0.5735 | 12825 tokens/s
+Epoch 14/20: training...
+  training: batch 500/2000
+  training: batch 1000/2000
+  training: batch 1500/2000
+  training: batch 2000/2000
+Epoch 14/20: validating...
+epoch 014 | train 1.4663 | validation 1.4330 | token accuracy 0.5757 | 12820 tokens/s
+Epoch 15/20: training...
+  training: batch 500/2000
+  training: batch 1000/2000
+  training: batch 1500/2000
+  training: batch 2000/2000
+Epoch 15/20: validating...
+epoch 015 | train 1.4562 | validation 1.4258 | token accuracy 0.5773 | 12824 tokens/s
+Epoch 16/20: training...
+  training: batch 500/2000
+  training: batch 1000/2000
+  training: batch 1500/2000
+  training: batch 2000/2000
+Epoch 16/20: validating...
+epoch 016 | train 1.4475 | validation 1.4217 | token accuracy 0.5787 | 12821 tokens/s
+Epoch 17/20: training...
+  training: batch 500/2000
+  training: batch 1000/2000
+  training: batch 1500/2000
+  training: batch 2000/2000
+Epoch 17/20: validating...
+epoch 017 | train 1.4406 | validation 1.4181 | token accuracy 0.5792 | 12826 tokens/s
+Epoch 18/20: training...
+  training: batch 500/2000
+  training: batch 1000/2000
+  training: batch 1500/2000
+  training: batch 2000/2000
+Epoch 18/20: validating...
+epoch 018 | train 1.4361 | validation 1.4166 | token accuracy 0.5804 | 12822 tokens/s
+Epoch 19/20: training...
+  training: batch 500/2000
+  training: batch 1000/2000
+  training: batch 1500/2000
+  training: batch 2000/2000
+Epoch 19/20: validating...
+epoch 019 | train 1.4328 | validation 1.4145 | token accuracy 0.5807 | 12826 tokens/s
+Epoch 20/20: training...
+  training: batch 500/2000
+  training: batch 1000/2000
+  training: batch 1500/2000
+  training: batch 2000/2000
+Epoch 20/20: validating...
+epoch 020 | train 1.4302 | validation 1.4138 | token accuracy 0.5809 | 12813 tokens/s

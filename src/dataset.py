@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import argparse
 import json
 import random
 from functools import partial
@@ -469,11 +470,21 @@ def build_datasets(
     test_ratio: float = 0.1,
     seed: int = 42,
     max_seq_length: int = 4096,
+    overfit_examples: int = 0,
 ) -> tuple[dict[str, PairedSequenceDataset], PlaintextCodec]:
     pairs = read_dataset(plain_path, cipher_path)
     splits = split_dataset(
         pairs, train_ratio, validation_ratio, test_ratio, seed
     )
+    if overfit_examples:
+        diagnostic_pairs = splits["train"][:overfit_examples]
+        # An overfit diagnostic measures both losses on the exact same data.
+        # Avoid encoding the unused full validation and test splits.
+        splits = {
+            "train": diagnostic_pairs,
+            "validation": diagnostic_pairs,
+            "test": [],
+        }
     target_codec = PlaintextCodec()
     datasets = {
         name: PairedSequenceDataset(
@@ -500,6 +511,7 @@ def build_dataloaders(
     max_seq_length: int = 4096,
     num_workers: int = 0,
     pin_memory: bool = False,
+    overfit_examples: int = 0,
 ) -> tuple[dict[str, DataLoader], PlaintextCodec, int]:
     datasets, target_codec = build_datasets(
         source_tokenizer,
@@ -510,6 +522,7 @@ def build_dataloaders(
         test_ratio,
         seed,
         max_seq_length,
+        overfit_examples,
     )
     source_pad_id = len(source_tokenizer.vocabulary)
     collate = partial(
@@ -546,6 +559,7 @@ def build_blt_dataloaders(
     max_seq_length: int = 4096,
     num_workers: int = 0,
     pin_memory: bool = False,
+    overfit_examples: int = 0,
 ) -> tuple[dict[str, DataLoader], ByteCodec, int]:
     splits = split_dataset(
         read_dataset(plain_path, cipher_path),
@@ -554,6 +568,13 @@ def build_blt_dataloaders(
         test_ratio,
         seed,
     )
+    if overfit_examples:
+        diagnostic_pairs = splits["train"][:overfit_examples]
+        splits = {
+            "train": diagnostic_pairs,
+            "validation": diagnostic_pairs,
+            "test": [],
+        }
     codec = ByteCodec()
     datasets = {
         name: BLTSequenceDataset(split, codec, max_seq_length)
@@ -580,3 +601,48 @@ def build_blt_dataloaders(
         for name, dataset in datasets.items()
     }
     return loaders, codec, codec.PAD
+
+
+def parse_args() -> argparse.Namespace:
+    parser = argparse.ArgumentParser(
+        description="Train the shared C1-C4 binary BPE tokenizer."
+    )
+    parser.add_argument("--seed", type=int, default=42)
+    parser.add_argument("--train-ratio", type=float, default=0.8)
+    parser.add_argument("--validation-ratio", type=float, default=0.1)
+    parser.add_argument("--test-ratio", type=float, default=0.1)
+    parser.add_argument("--device", default="cpu", help="cpu, cuda, cuda:0, ...")
+    size = parser.add_mutually_exclusive_group()
+    size.add_argument("--number-of-merges", type=int)
+    size.add_argument("--vocabulary-size", type=int)
+    return parser.parse_args()
+
+
+def main() -> None:
+    args = parse_args()
+    splits = split_dataset(
+        read_dataset(),
+        train_ratio=args.train_ratio,
+        validation_ratio=args.validation_ratio,
+        test_ratio=args.test_ratio,
+        seed=args.seed,
+    )
+    if args.vocabulary_size is not None:
+        if args.vocabulary_size < 2:
+            raise ValueError("vocabulary-size must be at least 2.")
+        number_of_merges = args.vocabulary_size - 2
+    else:
+        number_of_merges = (
+            args.number_of_merges if args.number_of_merges is not None else 254
+        )
+    tokenizer = BinaryBPE.train(
+        [ciphertext for _, ciphertext in splits["train"]],
+        number_of_merges=number_of_merges,
+        device=args.device,
+    )
+    tokenizer.save()
+    print(f"Saved {len(tokenizer.merges)} rules to {MERGE_RULES_PATH}.")
+
+
+if __name__ == "__main__":
+    main()

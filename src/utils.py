@@ -3,6 +3,8 @@
 from __future__ import annotations
 
 import time
+import math
+from collections import Counter
 from pathlib import Path
 from typing import Any, Sequence
 
@@ -161,65 +163,135 @@ def sequence_accuracy(predictions: Sequence[str], targets: Sequence[str]) -> flo
     return sum(a == b for a, b in zip(predictions, targets)) / len(targets)
 
 
+def _edit_distance(left: str, right: str) -> int:
+    previous = list(range(len(right) + 1))
+    for left_index, left_item in enumerate(left, start=1):
+        current = [left_index]
+        for right_index, right_item in enumerate(right, start=1):
+            current.append(
+                min(
+                    current[-1] + 1,
+                    previous[right_index] + 1,
+                    previous[right_index - 1] + (left_item != right_item),
+                )
+            )
+        previous = current
+    return previous[-1]
+
+
+def _ngrams(tokens: list[str], order: int) -> Counter[tuple[str, ...]]:
+    return Counter(
+        tuple(tokens[index : index + order])
+        for index in range(len(tokens) - order + 1)
+    )
+
+
+def _corpus_bleu(predictions: Sequence[str], targets: Sequence[str]) -> float:
+    """Word-level corpus BLEU-4 with add-one smoothing."""
+
+    clipped = [0] * 4
+    totals = [0] * 4
+    prediction_length = target_length = 0
+    for prediction, target in zip(predictions, targets):
+        hypothesis = prediction.split()
+        reference = target.split()
+        prediction_length += len(hypothesis)
+        target_length += len(reference)
+        for order in range(1, 5):
+            hypothesis_counts = _ngrams(hypothesis, order)
+            reference_counts = _ngrams(reference, order)
+            clipped[order - 1] += sum(
+                min(count, reference_counts[ngram])
+                for ngram, count in hypothesis_counts.items()
+            )
+            totals[order - 1] += sum(hypothesis_counts.values())
+    if prediction_length == 0:
+        return 0.0
+    precisions = [
+        (matches + 1) / (total + 1)
+        for matches, total in zip(clipped, totals)
+    ]
+    brevity_penalty = (
+        1.0
+        if prediction_length > target_length
+        else math.exp(1.0 - target_length / prediction_length)
+    )
+    return brevity_penalty * math.exp(
+        sum(math.log(precision) for precision in precisions) / 4
+    )
+
+
+def _f1(overlap: int, predicted: int, reference: int) -> float:
+    if predicted == 0 or reference == 0 or overlap == 0:
+        return 0.0
+    precision = overlap / predicted
+    recall = overlap / reference
+    return 2 * precision * recall / (precision + recall)
+
+
+def _lcs_length(left: list[str], right: list[str]) -> int:
+    previous = [0] * (len(right) + 1)
+    for left_item in left:
+        current = [0]
+        for index, right_item in enumerate(right, start=1):
+            current.append(
+                previous[index - 1] + 1
+                if left_item == right_item
+                else max(previous[index], current[-1])
+            )
+        previous = current
+    return previous[-1]
+
+
+def _rouge_scores(predictions: Sequence[str], targets: Sequence[str]) -> dict[str, float]:
+    totals = {"rouge1_f1": 0.0, "rouge2_f1": 0.0, "rougeL_f1": 0.0}
+    if not targets:
+        return totals
+    for prediction, target in zip(predictions, targets):
+        hypothesis = prediction.split()
+        reference = target.split()
+        for order, name in ((1, "rouge1_f1"), (2, "rouge2_f1")):
+            hypothesis_counts = _ngrams(hypothesis, order)
+            reference_counts = _ngrams(reference, order)
+            overlap = sum(
+                min(count, reference_counts[ngram])
+                for ngram, count in hypothesis_counts.items()
+            )
+            totals[name] += _f1(
+                overlap,
+                sum(hypothesis_counts.values()),
+                sum(reference_counts.values()),
+            )
+        totals["rougeL_f1"] += _f1(
+            _lcs_length(hypothesis, reference), len(hypothesis), len(reference)
+        )
+    return {name: value / len(targets) for name, value in totals.items()}
+
+
 def compute_evaluation_metrics(
-    predictions: Sequence[str], targets: Sequence[str]
+    predictions: Sequence[str],
+    targets: Sequence[str],
+    include_tokenized_metrics: bool = True,
 ) -> dict[str, float]:
-    """Compute text metrics using NLTK and rouge-score implementations."""
+    """Compute required greedy-decoding metrics for one test set."""
 
     if len(predictions) != len(targets):
         raise ValueError("Predictions and targets must have equal lengths.")
-    try:
-        from nltk.metrics.distance import edit_distance
-        from nltk.translate.bleu_score import SmoothingFunction, corpus_bleu
-        from rouge_score.rouge_scorer import RougeScorer
-    except ImportError as error:
-        raise RuntimeError(
-            "Final evaluation requires nltk and rouge-score."
-        ) from error
-
     distances = [
-        edit_distance(prediction, target)
+        _edit_distance(prediction, target)
         for prediction, target in zip(predictions, targets)
     ]
-    references = [[target.split()] for target in targets]
-    hypotheses = [prediction.split() for prediction in predictions]
-    bleu = (
-        corpus_bleu(
-            references,
-            hypotheses,
-            smoothing_function=SmoothingFunction().method1,
-        )
-        if hypotheses
-        else 0.0
-    )
-
-    scorer = RougeScorer(["rouge1", "rouge2", "rougeL"], use_stemmer=True)
-    rouge = [
-        scorer.score(target, prediction)
-        for prediction, target in zip(predictions, targets)
-    ]
-    count = len(rouge)
-    return {
+    metrics = {
         "bit_level_accuracy": bit_level_accuracy(predictions, targets),
         "sequence_accuracy": sequence_accuracy(predictions, targets),
         "levenshtein_distance": sum(distances) / len(distances) if distances else 0.0,
-        "bleu": bleu,
-        "rouge1_f1": (
-            sum(score["rouge1"].fmeasure for score in rouge) / count
-            if count
-            else 0.0
-        ),
-        "rouge2_f1": (
-            sum(score["rouge2"].fmeasure for score in rouge) / count
-            if count
-            else 0.0
-        ),
-        "rougeL_f1": (
-            sum(score["rougeL"].fmeasure for score in rouge) / count
-            if count
-            else 0.0
-        ),
     }
+    if not include_tokenized_metrics:
+        return metrics
+
+    metrics["bleu"] = _corpus_bleu(predictions, targets)
+    metrics.update(_rouge_scores(predictions, targets))
+    return metrics
 
 
 def plot_training_history(

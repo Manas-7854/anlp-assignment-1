@@ -151,7 +151,8 @@ class MultiHeadAttention(nn.Module):
         v = self._split_heads(self.v_proj(value))
 
         if self.rope is not None:
-            q, k = self.rope(q, k)
+            q = self.rope(q)
+            k = self.rope(k)
 
         attended, weights = self.attention(
             q,

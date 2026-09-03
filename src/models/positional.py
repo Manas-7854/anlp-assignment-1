@@ -51,7 +51,7 @@ class SinusoidalPositionalEncoding(nn.Module):
 
 
 class RotaryPositionalEmbedding(nn.Module):
-    """Apply rotary positional embeddings to query and key tensors."""
+    """Apply rotary positional embeddings to one attention tensor."""
 
     def __init__(
         self,
@@ -79,10 +79,12 @@ class RotaryPositionalEmbedding(nn.Module):
         self.head_dim = head_dim
         self.max_seq_length = max_seq_length
 
-    def _rotate(self, x: torch.Tensor) -> torch.Tensor:
+    def forward(self, x: torch.Tensor) -> torch.Tensor:
+        """Rotate x using its own sequence length, preserving its shape."""
+
         if x.ndim != 4 or x.size(-1) != self.head_dim:
             raise ValueError(
-                "Expected query/key with shape "
+                "Expected an attention tensor with shape "
                 f"[batch, heads, seq_len, {self.head_dim}]."
             )
         seq_len = x.size(-2)
@@ -100,10 +102,3 @@ class RotaryPositionalEmbedding(nn.Module):
         rotated_even = even * cosine - odd * sine
         rotated_odd = even * sine + odd * cosine
         return torch.stack((rotated_even, rotated_odd), dim=-1).flatten(-2)
-
-    def forward(
-        self, query: torch.Tensor, key: torch.Tensor
-    ) -> tuple[torch.Tensor, torch.Tensor]:
-        """Return rotated Q and K; values are intentionally not involved."""
-
-        return self._rotate(query), self._rotate(key)

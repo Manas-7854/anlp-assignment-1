@@ -1,19 +1,17 @@
 ==========================================
-SLURM_JOB_ID = 2685651
-SLURM_NODELIST = gnode025
+SLURM_JOB_ID = 2686373
+SLURM_NODELIST = gnode050
 SLURM_JOB_GPUS = 3
 ==========================================
-[Wed Sep  2 11:17:42 AM IST 2026] Job 2685651: starting C3 training
+[Wed Sep  2 11:14:52 PM IST 2026] Job 2686373: starting C3 training
 Working directory: /home2/manas.agrawal/anlp/anlp-assignment-1
 Activating Conda environment: torch_env
-[Wed Sep  2 11:17:44 AM IST 2026] Environment ready; launching C3 with batch size 2
+[Wed Sep  2 11:14:58 PM IST 2026] Environment ready; launching C3 final train/validation/test run
 Python interpreter: /home2/manas.agrawal/miniforge3/envs/torch_env/bin/python3
-started this file
-reached run training
 Starting C3 on cuda (20 epochs, batch size 2)
-Loading frozen BPE tokenizer...
-Tokenizer loaded (1022 merge rules).
+Precision: FP16 mixed precision
 Loading and encoding dataset splits...
+Loading frozen BPE tokenizer...
 Encoding train split (4000 examples)...
   train: encoded 1000/4000 examples
   train: encoded 2000/4000 examples
@@ -31,92 +29,207 @@ Encoding test split (500 examples)...
   test: encoded 500/500 examples
 Dataset ready: train=4000, validation=500, test=500
 Building model and optimizer...
+Learning-rate schedule: linear warmup + cosine decay; 2000 warmup steps, peak 3.00e-04, minimum 1.00e-05 over 40000 steps
 Model ready (6,519,171 parameters).
 Initializing WandB (online mode)...
 wandb: [wandb.login()] Loaded credentials for https://api.wandb.ai from /home2/manas.agrawal/.netrc.
 wandb: Currently logged in as: manasagrawal206 (manasagrawal206-iiit-hyderabad) to https://api.wandb.ai. Use `wandb login --relogin` to force relogin
-wandb: setting up run irootc4m
+wandb: setting up run b0axlr97
 wandb: Tracking run with wandb version 0.29.0
-wandb: Run data is saved locally in /home2/manas.agrawal/anlp/anlp-assignment-1/wandb/run-20260902_112437-irootc4m
+wandb: Run data is saved locally in /home2/manas.agrawal/anlp/anlp-assignment-1/wandb/run-20260902_232223-b0axlr97
 wandb: Run `wandb offline` to turn off syncing.
 wandb: Syncing run C3
 wandb: ⭐️ View project at https://wandb.ai/manasagrawal206-iiit-hyderabad/anlp-assignment-1
-wandb: 🚀 View run at https://wandb.ai/manasagrawal206-iiit-hyderabad/anlp-assignment-1/runs/irootc4m
+wandb: 🚀 View run at https://wandb.ai/manasagrawal206-iiit-hyderabad/anlp-assignment-1/runs/b0axlr97
 WandB initialized. Starting training...
 Epoch 1/20: training...
   training: batch 500/2000
-Traceback (most recent call last):
-  File "/home2/manas.agrawal/anlp/anlp-assignment-1/src/train.py", line 817, in <module>
-    main()
-  File "/home2/manas.agrawal/anlp/anlp-assignment-1/src/train.py", line 813, in main
-    run_training(args.config, overrides)
-  File "/home2/manas.agrawal/anlp/anlp-assignment-1/src/train.py", line 680, in run_training
-    train_loss, global_step, trained_tokens = train_one_epoch(
-                                              ^^^^^^^^^^^^^^^^
-  File "/home2/manas.agrawal/anlp/anlp-assignment-1/src/train.py", line 452, in train_one_epoch
-    loss, token_count, _ = compute_batch_loss(
-                           ^^^^^^^^^^^^^^^^^^^
-  File "/home2/manas.agrawal/anlp/anlp-assignment-1/src/train.py", line 415, in compute_batch_loss
-    logits = model(
-             ^^^^^^
-  File "/home2/manas.agrawal/miniforge3/envs/torch_env/lib/python3.12/site-packages/torch/nn/modules/module.py", line 1736, in _wrapped_call_impl
-    return self._call_impl(*args, **kwargs)
-           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "/home2/manas.agrawal/miniforge3/envs/torch_env/lib/python3.12/site-packages/torch/nn/modules/module.py", line 1747, in _call_impl
-    return forward_call(*args, **kwargs)
-           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "/home2/manas.agrawal/anlp/anlp-assignment-1/src/train.py", line 362, in forward
-    hidden = self.decoder(
-             ^^^^^^^^^^^^^
-  File "/home2/manas.agrawal/miniforge3/envs/torch_env/lib/python3.12/site-packages/torch/nn/modules/module.py", line 1736, in _wrapped_call_impl
-    return self._call_impl(*args, **kwargs)
-           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "/home2/manas.agrawal/miniforge3/envs/torch_env/lib/python3.12/site-packages/torch/nn/modules/module.py", line 1747, in _call_impl
-    return forward_call(*args, **kwargs)
-           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "/home2/manas.agrawal/anlp/anlp-assignment-1/src/train.py", line 324, in forward
-    x = block(
-        ^^^^^^
-  File "/home2/manas.agrawal/miniforge3/envs/torch_env/lib/python3.12/site-packages/torch/nn/modules/module.py", line 1736, in _wrapped_call_impl
-    return self._call_impl(*args, **kwargs)
-           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "/home2/manas.agrawal/miniforge3/envs/torch_env/lib/python3.12/site-packages/torch/nn/modules/module.py", line 1747, in _call_impl
-    return forward_call(*args, **kwargs)
-           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "/home2/manas.agrawal/anlp/anlp-assignment-1/src/train.py", line 264, in forward
-    attended, _ = self.cross_attention(
-                  ^^^^^^^^^^^^^^^^^^^^^
-  File "/home2/manas.agrawal/miniforge3/envs/torch_env/lib/python3.12/site-packages/torch/nn/modules/module.py", line 1736, in _wrapped_call_impl
-    return self._call_impl(*args, **kwargs)
-           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "/home2/manas.agrawal/miniforge3/envs/torch_env/lib/python3.12/site-packages/torch/nn/modules/module.py", line 1747, in _call_impl
-    return forward_call(*args, **kwargs)
-           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "/home2/manas.agrawal/anlp/anlp-assignment-1/src/models/attention.py", line 264, in forward
-    attended, weights = self.attention(
-                        ^^^^^^^^^^^^^^^
-  File "/home2/manas.agrawal/miniforge3/envs/torch_env/lib/python3.12/site-packages/torch/nn/modules/module.py", line 1736, in _wrapped_call_impl
-    return self._call_impl(*args, **kwargs)
-           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "/home2/manas.agrawal/miniforge3/envs/torch_env/lib/python3.12/site-packages/torch/nn/modules/module.py", line 1747, in _call_impl
-    return forward_call(*args, **kwargs)
-           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "/home2/manas.agrawal/anlp/anlp-assignment-1/src/models/attention.py", line 98, in forward
-    output = torch.matmul(self.dropout(weights), value)
-                          ^^^^^^^^^^^^^^^^^^^^^
-  File "/home2/manas.agrawal/miniforge3/envs/torch_env/lib/python3.12/site-packages/torch/nn/modules/module.py", line 1736, in _wrapped_call_impl
-    return self._call_impl(*args, **kwargs)
-           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "/home2/manas.agrawal/miniforge3/envs/torch_env/lib/python3.12/site-packages/torch/nn/modules/module.py", line 1747, in _call_impl
-    return forward_call(*args, **kwargs)
-           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "/home2/manas.agrawal/miniforge3/envs/torch_env/lib/python3.12/site-packages/torch/nn/modules/dropout.py", line 70, in forward
-    return F.dropout(input, self.p, self.training, self.inplace)
-           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "/home2/manas.agrawal/miniforge3/envs/torch_env/lib/python3.12/site-packages/torch/nn/functional.py", line 1425, in dropout
-    _VF.dropout_(input, p, training) if inplace else _VF.dropout(input, p, training)
-                                                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-torch.OutOfMemoryError: CUDA out of memory. Tried to allocate 316.00 MiB. GPU 0 has a total capacity of 10.90 GiB of which 21.31 MiB is free. Including non-PyTorch memory, this process has 10.88 GiB memory in use. Of the allocated memory 10.36 GiB is allocated by PyTorch, and 356.89 MiB is reserved by PyTorch but unallocated. If reserved but unallocated memory is large try setting PYTORCH_CUDA_ALLOC_CONF=expandable_segments:True to avoid fragmentation.  See documentation for Memory Management  (https://pytorch.org/docs/stable/notes/cuda.html#environment-variables)
-[1;34mwandb[0m: 
-[1;34mwandb[0m: 🚀 View run [33mC3[0m at: [34mhttps://wandb.ai/manasagrawal206-iiit-hyderabad/anlp-assignment-1/runs/irootc4m[0m
-[1;34mwandb[0m: Find logs at: [1;35mwandb/run-20260902_112437-irootc4m/logs[0m
+  training: batch 1000/2000
+  training: batch 1500/2000
+  training: batch 2000/2000
+Epoch 1/20: validating...
+epoch 001 | train 2.6584 | validation 2.4603 | token accuracy 0.2710 | 15912 tokens/s
+Epoch 2/20: training...
+  training: batch 500/2000
+  training: batch 1000/2000
+  training: batch 1500/2000
+  training: batch 2000/2000
+Epoch 2/20: validating...
+epoch 002 | train 2.4221 | validation 2.3202 | token accuracy 0.3090 | 17051 tokens/s
+Epoch 3/20: training...
+  training: batch 500/2000
+  training: batch 1000/2000
+  training: batch 1500/2000
+  training: batch 2000/2000
+Epoch 3/20: validating...
+epoch 003 | train 2.2592 | validation 2.0810 | token accuracy 0.3779 | 17071 tokens/s
+Epoch 4/20: training...
+  training: batch 500/2000
+  training: batch 1000/2000
+  training: batch 1500/2000
+  training: batch 2000/2000
+Epoch 4/20: validating...
+epoch 004 | train 2.0389 | validation 1.8155 | token accuracy 0.4643 | 16925 tokens/s
+Epoch 5/20: training...
+  training: batch 500/2000
+  training: batch 1000/2000
+  training: batch 1500/2000
+  training: batch 2000/2000
+Epoch 5/20: validating...
+epoch 005 | train 1.7744 | validation 1.5271 | token accuracy 0.5537 | 17077 tokens/s
+Epoch 6/20: training...
+  training: batch 500/2000
+  training: batch 1000/2000
+  training: batch 1500/2000
+  training: batch 2000/2000
+Epoch 6/20: validating...
+epoch 006 | train 1.5395 | validation 1.3051 | token accuracy 0.6190 | 16291 tokens/s
+Epoch 7/20: training...
+  training: batch 500/2000
+  training: batch 1000/2000
+  training: batch 1500/2000
+  training: batch 2000/2000
+Epoch 7/20: validating...
+epoch 007 | train 1.3711 | validation 1.1757 | token accuracy 0.6565 | 16477 tokens/s
+Epoch 8/20: training...
+  training: batch 500/2000
+  training: batch 1000/2000
+  training: batch 1500/2000
+  training: batch 2000/2000
+Epoch 8/20: validating...
+epoch 008 | train 1.2497 | validation 1.0303 | token accuracy 0.6997 | 16485 tokens/s
+Epoch 9/20: training...
+  training: batch 500/2000
+  training: batch 1000/2000
+  training: batch 1500/2000
+  training: batch 2000/2000
+Epoch 9/20: validating...
+epoch 009 | train 1.1570 | validation 0.9898 | token accuracy 0.7116 | 16318 tokens/s
+Epoch 10/20: training...
+  training: batch 500/2000
+  training: batch 1000/2000
+  training: batch 1500/2000
+  training: batch 2000/2000
+Epoch 10/20: validating...
+epoch 010 | train 1.0804 | validation 0.9129 | token accuracy 0.7337 | 16505 tokens/s
+Epoch 11/20: training...
+  training: batch 500/2000
+  training: batch 1000/2000
+  training: batch 1500/2000
+  training: batch 2000/2000
+Epoch 11/20: validating...
+epoch 011 | train 1.0145 | validation 0.8575 | token accuracy 0.7496 | 16451 tokens/s
+Epoch 12/20: training...
+  training: batch 500/2000
+  training: batch 1000/2000
+  training: batch 1500/2000
+  training: batch 2000/2000
+Epoch 12/20: validating...
+epoch 012 | train 0.9568 | validation 0.7800 | token accuracy 0.7716 | 16430 tokens/s
+Epoch 13/20: training...
+  training: batch 500/2000
+  training: batch 1000/2000
+  training: batch 1500/2000
+  training: batch 2000/2000
+Epoch 13/20: validating...
+epoch 013 | train 0.9068 | validation 0.8427 | token accuracy 0.7547 | 16496 tokens/s
+Epoch 14/20: training...
+  training: batch 500/2000
+  training: batch 1000/2000
+  training: batch 1500/2000
+  training: batch 2000/2000
+Epoch 14/20: validating...
+epoch 014 | train 0.8618 | validation 0.6980 | token accuracy 0.7959 | 16390 tokens/s
+Epoch 15/20: training...
+  training: batch 500/2000
+  training: batch 1000/2000
+  training: batch 1500/2000
+  training: batch 2000/2000
+Epoch 15/20: validating...
+epoch 015 | train 0.8262 | validation 0.7965 | token accuracy 0.7679 | 16496 tokens/s
+Epoch 16/20: training...
+  training: batch 500/2000
+  training: batch 1000/2000
+  training: batch 1500/2000
+  training: batch 2000/2000
+Epoch 16/20: validating...
+epoch 016 | train 0.7941 | validation 0.7280 | token accuracy 0.7872 | 16510 tokens/s
+Epoch 17/20: training...
+  training: batch 500/2000
+  training: batch 1000/2000
+  training: batch 1500/2000
+  training: batch 2000/2000
+Epoch 17/20: validating...
+epoch 017 | train 0.7704 | validation 0.6690 | token accuracy 0.8038 | 16274 tokens/s
+Epoch 18/20: training...
+  training: batch 500/2000
+  training: batch 1000/2000
+  training: batch 1500/2000
+  training: batch 2000/2000
+Epoch 18/20: validating...
+epoch 018 | train 0.7519 | validation 0.6739 | token accuracy 0.8022 | 16561 tokens/s
+Epoch 19/20: training...
+  training: batch 500/2000
+  training: batch 1000/2000
+  training: batch 1500/2000
+  training: batch 2000/2000
+Epoch 19/20: validating...
+epoch 019 | train 0.7386 | validation 0.6711 | token accuracy 0.8034 | 16427 tokens/s
+Epoch 20/20: training...
+  training: batch 500/2000
+  training: batch 1000/2000
+  training: batch 1500/2000
+  training: batch 2000/2000
+Epoch 20/20: validating...
+epoch 020 | train 0.7310 | validation 0.6629 | token accuracy 0.8054 | 16420 tokens/s
+/home2/manas.agrawal/anlp/anlp-assignment-1/src/utils.py:136: FutureWarning: You are using `torch.load` with `weights_only=False` (the current default value), which uses the default pickle module implicitly. It is possible to construct malicious pickle data which will execute arbitrary code during unpickling (See https://github.com/pytorch/pytorch/blob/main/SECURITY.md#untrusted-models for more details). In a future release, the default value for `weights_only` will be flipped to `True`. This limits the functions that could be executed during unpickling. Arbitrary objects will no longer be allowed to be loaded via this mode unless they are explicitly allowlisted by the user via `torch.serialization.add_safe_globals`. We recommend you start setting `weights_only=True` for any use case where you don't have full control of the loaded file. Please open an issue on GitHub for any issues related to this experimental feature.
+  checkpoint = torch.load(Path(path), map_location=device)
+Saved final test metrics to /home2/manas.agrawal/anlp/anlp-assignment-1/outputs/metrics/C3_test_metrics.json
+Final test metrics:
+  bit_level_accuracy: 0.618402
+  sequence_accuracy: 0.002000
+  levenshtein_distance: 315.952000
+  bleu: 0.127038
+  rouge1_f1: 0.481853
+  rouge2_f1: 0.230759
+  rougeL_f1: 0.463845
+  loss: 0.662453
+  token_accuracy: 0.805547
+  training_time_seconds: 3046.089342
+  gpu_peak_memory_mb: 8911.841309
+wandb: updating run metadata
+wandb: uploading config.yaml; uploading output.log; uploading wandb-summary.json
+wandb: uploading config.yaml; uploading output.log
+wandb: uploading history steps 799-799, summary, console lines 143-155
+wandb: 
+wandb: Run history:
+wandb:                         epoch ▁▁▂▂▂▃▃▄▄▄▅▅▅▆▆▇▇▇██
+wandb:                   global_step ▁▁▁▁▁▂▂▂▃▃▃▃▃▃▃▃▃▃▄▄▄▄▄▄▅▅▅▅▅▅▆▆▆▆▇▇▇▇██
+wandb:            gpu/peak_memory_mb ▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁
+wandb:                 learning_rate ▁▄▇██████▇▇▇▇▆▆▆▆▅▅▅▅▅▅▄▄▄▄▄▄▄▂▂▂▂▂▁▁▁▁▁
+wandb: performance/tokens_per_second ▁██▇█▃▄▄▃▅▄▄▅▄▅▅▃▅▄▄
+wandb:       test/bit_level_accuracy ▁
+wandb:                     test/bleu ▁
+wandb:     test/levenshtein_distance ▁
+wandb:                     test/loss ▁
+wandb:                test/rouge1_f1 ▁
+wandb:                           +11 ...
+wandb: 
+wandb: Run summary:
+wandb:                         epoch 20
+wandb:                   global_step 40000
+wandb:            gpu/peak_memory_mb 8911.84131
+wandb:                 learning_rate 1e-05
+wandb: performance/tokens_per_second 16419.8749
+wandb:       test/bit_level_accuracy 0.6184
+wandb:                     test/bleu 0.12704
+wandb:     test/levenshtein_distance 315.952
+wandb:                     test/loss 0.66245
+wandb:                test/rouge1_f1 0.48185
+wandb:                           +11 ...
+wandb: 
+wandb: 🚀 View run C3 at: https://wandb.ai/manasagrawal206-iiit-hyderabad/anlp-assignment-1/runs/b0axlr97
+wandb: ⭐️ View project at: https://wandb.ai/manasagrawal206-iiit-hyderabad/anlp-assignment-1
+wandb: Synced 5 W&B file(s), 0 media file(s), 0 artifact file(s) and 0 other file(s)
+wandb: Find logs at: ./wandb/run-20260902_232223-b0axlr97/logs
+[Thu Sep  3 01:10:49 AM IST 2026] C3 training completed successfully

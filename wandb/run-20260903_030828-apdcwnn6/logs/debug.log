@@ -1,0 +1,24 @@
+2026-09-03 03:08:28,736 INFO    MainThread:528718 [wandb_setup.py:_flush():81] Current SDK version is 0.29.0
+2026-09-03 03:08:28,736 INFO    MainThread:528718 [wandb_setup.py:_flush():81] Configure stats pid to 528718
+2026-09-03 03:08:28,736 INFO    MainThread:528718 [wandb_setup.py:_flush():81] Loading settings from environment variables
+2026-09-03 03:08:28,736 INFO    MainThread:528718 [wandb_init.py:setup_run_log_directory():739] Logging user logs to /home2/manas.agrawal/anlp/anlp-assignment-1/wandb/run-20260903_030828-apdcwnn6/logs/debug.log
+2026-09-03 03:08:28,736 INFO    MainThread:528718 [wandb_init.py:setup_run_log_directory():740] Logging internal logs to /home2/manas.agrawal/anlp/anlp-assignment-1/wandb/run-20260903_030828-apdcwnn6/logs/debug-internal.log
+2026-09-03 03:08:28,736 INFO    MainThread:528718 [wandb_init.py:init():783] calling init triggers
+2026-09-03 03:08:28,736 INFO    MainThread:528718 [wandb_init.py:init():788] wandb.init called with sweep_config: {}
+config: {'d_model': 256, 'num_layers': 4, 'num_heads': 8, 'num_kv_heads': 2, 'd_ff': 1024, 'dropout': 0.1, 'batch_size': 2, 'learning_rate': 0.0003, 'min_learning_rate': 1e-05, 'warmup_ratio': 0.05, 'weight_decay': 0.01, 'gradient_clip': 1.0, 'fp16': True, 'epochs': 20, 'max_seq_length': 4096, 'max_decode_length': 4096, 'seed': 42, 'train_ratio': 0.8, 'validation_ratio': 0.1, 'test_ratio': 0.1, 'num_workers': 0, 'log_every': 50, 'device': 'cuda', 'wandb_project': 'anlp-assignment-1', 'wandb_mode': 'online', 'evaluate_test': True, 'overfit_examples': 0, 'plain_path': '/home2/manas.agrawal/anlp/anlp-assignment-1/src/datset/brown_plain.txt', 'cipher_path': '/home2/manas.agrawal/anlp/anlp-assignment-1/src/datset/brown_cipher.txt', 'merge_rules_path': '/home2/manas.agrawal/anlp/anlp-assignment-1/outputs/merge_rules.json', 'output_dir': '/home2/manas.agrawal/anlp/anlp-assignment-1/outputs', 'attention': 'mha', 'positional': 'rope', 'norm': 'layernorm', 'tokenization': 'bpe', 'name': 'C2', 'source_vocab_size': 1025, 'target_vocab_size': 131, 'dataset_statistics': {'train': {'examples': 4000, 'batches_per_epoch': 2000, 'source_min_length': 16, 'source_max_length': 1938, 'target_min_length': 23, 'target_max_length': 2672}, 'validation': {'examples': 500, 'batches_per_epoch': 250, 'source_min_length': 19, 'source_max_length': 1697, 'target_min_length': 27, 'target_max_length': 2420}, 'test': {'examples': 500, 'batches_per_epoch': 250, 'source_min_length': 20, 'source_max_length': 1361, 'target_min_length': 31, 'target_max_length': 1876}}, 'parameter_count': 7703427, '_wandb': {}}
+2026-09-03 03:08:28,736 INFO    MainThread:528718 [wandb_init.py:init():831] starting backend
+2026-09-03 03:08:28,736 INFO    MainThread:528718 [wandb_init.py:init():846] sending inform_init request
+2026-09-03 03:08:29,957 INFO    MainThread:528718 [wandb_init.py:init():851] backend started and connected
+2026-09-03 03:08:30,008 INFO    MainThread:528718 [wandb_init.py:init():921] updated telemetry
+2026-09-03 03:08:30,019 INFO    MainThread:528718 [wandb_init.py:init():944] communicating run to backend with 90.0 second timeout
+2026-09-03 03:08:31,076 INFO    MainThread:528718 [wandb_init.py:init():981] starting run threads in backend
+2026-09-03 03:08:31,177 INFO    MainThread:528718 [wandb_run.py:_console_start():2545] atexit reg
+2026-09-03 03:08:31,177 INFO    MainThread:528718 [wandb_run.py:_redirect():2395] redirect: wrap_raw
+2026-09-03 03:08:31,177 INFO    MainThread:528718 [wandb_run.py:_redirect():2464] Wrapping output streams.
+2026-09-03 03:08:31,177 INFO    MainThread:528718 [wandb_run.py:_redirect():2487] Redirects installed.
+2026-09-03 03:08:31,182 INFO    MainThread:528718 [wandb_init.py:init():1019] run started, returning control to user process
+2026-09-03 04:47:36,040 INFO    MainThread:528718 [wandb_run.py:_finish():2316] finishing run manasagrawal206-iiit-hyderabad/anlp-assignment-1/apdcwnn6
+2026-09-03 04:47:36,042 INFO    MainThread:528718 [wandb_run.py:_atexit_cleanup():2512] got exitcode: 0
+2026-09-03 04:47:36,043 INFO    MainThread:528718 [wandb_run.py:_restore():2494] restore
+2026-09-03 04:47:36,043 INFO    MainThread:528718 [wandb_run.py:_restore():2500] restore done
+2026-09-03 04:47:39,040 INFO    MainThread:528718 [wandb_run.py:_footer_sync_info():3917] logging synced files

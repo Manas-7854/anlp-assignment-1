@@ -1,0 +1,4 @@
+# PyTorch model and optimizer checkpoints are large binary artifacts.
+# Store final checkpoints on Hugging Face rather than in Git.
+*.pt
+output/checkpoints/

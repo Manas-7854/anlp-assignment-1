@@ -1,0 +1,152 @@
+WandB initialized. Starting training...
+Epoch 1/20: training...
+  training: batch 500/2000
+  training: batch 1000/2000
+  training: batch 1500/2000
+  training: batch 2000/2000
+Epoch 1/20: validating...
+epoch 001 | train 2.7529 | validation 2.2910 | token accuracy 0.3266 | 12386 tokens/s
+Epoch 2/20: training...
+  training: batch 500/2000
+  training: batch 1000/2000
+  training: batch 1500/2000
+  training: batch 2000/2000
+Epoch 2/20: validating...
+epoch 002 | train 2.2590 | validation 2.1425 | token accuracy 0.3650 | 14723 tokens/s
+Epoch 3/20: training...
+  training: batch 500/2000
+  training: batch 1000/2000
+  training: batch 1500/2000
+  training: batch 2000/2000
+Epoch 3/20: validating...
+epoch 003 | train 2.1680 | validation 2.0602 | token accuracy 0.3888 | 12991 tokens/s
+Epoch 4/20: training...
+  training: batch 500/2000
+  training: batch 1000/2000
+  training: batch 1500/2000
+  training: batch 2000/2000
+Epoch 4/20: validating...
+epoch 004 | train 2.0906 | validation 1.9785 | token accuracy 0.4139 | 13961 tokens/s
+Epoch 5/20: training...
+  training: batch 500/2000
+  training: batch 1000/2000
+  training: batch 1500/2000
+  training: batch 2000/2000
+Epoch 5/20: validating...
+epoch 005 | train 2.0115 | validation 1.8448 | token accuracy 0.4470 | 13041 tokens/s
+Epoch 6/20: training...
+  training: batch 500/2000
+  training: batch 1000/2000
+  training: batch 1500/2000
+  training: batch 2000/2000
+Epoch 6/20: validating...
+epoch 006 | train 1.8127 | validation 1.4563 | token accuracy 0.5521 | 14745 tokens/s
+Epoch 7/20: training...
+  training: batch 500/2000
+  training: batch 1000/2000
+  training: batch 1500/2000
+  training: batch 2000/2000
+Epoch 7/20: validating...
+epoch 007 | train 1.5171 | validation 1.1866 | token accuracy 0.6311 | 13189 tokens/s
+Epoch 8/20: training...
+  training: batch 500/2000
+  training: batch 1000/2000
+  training: batch 1500/2000
+  training: batch 2000/2000
+Epoch 8/20: validating...
+epoch 008 | train 1.3035 | validation 0.9594 | token accuracy 0.6969 | 14931 tokens/s
+Epoch 9/20: training...
+  training: batch 500/2000
+  training: batch 1000/2000
+  training: batch 1500/2000
+  training: batch 2000/2000
+Epoch 9/20: validating...
+epoch 009 | train 1.1015 | validation 0.7330 | token accuracy 0.7677 | 12741 tokens/s
+Epoch 10/20: training...
+  training: batch 500/2000
+  training: batch 1000/2000
+  training: batch 1500/2000
+  training: batch 2000/2000
+Epoch 10/20: validating...
+epoch 010 | train 0.9162 | validation 0.5660 | token accuracy 0.8195 | 15360 tokens/s
+Epoch 11/20: training...
+  training: batch 500/2000
+  training: batch 1000/2000
+  training: batch 1500/2000
+  training: batch 2000/2000
+Epoch 11/20: validating...
+epoch 011 | train 0.7886 | validation 0.4678 | token accuracy 0.8508 | 12252 tokens/s
+Epoch 12/20: training...
+  training: batch 500/2000
+  training: batch 1000/2000
+  training: batch 1500/2000
+  training: batch 2000/2000
+Epoch 12/20: validating...
+epoch 012 | train 0.7045 | validation 0.4012 | token accuracy 0.8717 | 14941 tokens/s
+Epoch 13/20: training...
+  training: batch 500/2000
+  training: batch 1000/2000
+  training: batch 1500/2000
+  training: batch 2000/2000
+Epoch 13/20: validating...
+epoch 013 | train 0.6392 | validation 0.3554 | token accuracy 0.8859 | 12836 tokens/s
+Epoch 14/20: training...
+  training: batch 500/2000
+  training: batch 1000/2000
+  training: batch 1500/2000
+  training: batch 2000/2000
+Epoch 14/20: validating...
+epoch 014 | train 0.5891 | validation 0.3194 | token accuracy 0.8976 | 14691 tokens/s
+Epoch 15/20: training...
+  training: batch 500/2000
+  training: batch 1000/2000
+  training: batch 1500/2000
+  training: batch 2000/2000
+Epoch 15/20: validating...
+epoch 015 | train 0.5497 | validation 0.2941 | token accuracy 0.9050 | 13112 tokens/s
+Epoch 16/20: training...
+  training: batch 500/2000
+  training: batch 1000/2000
+  training: batch 1500/2000
+  training: batch 2000/2000
+Epoch 16/20: validating...
+epoch 016 | train 0.5212 | validation 0.2761 | token accuracy 0.9112 | 11227 tokens/s
+Epoch 17/20: training...
+  training: batch 500/2000
+  training: batch 1000/2000
+  training: batch 1500/2000
+  training: batch 2000/2000
+Epoch 17/20: validating...
+epoch 017 | train 0.4995 | validation 0.2637 | token accuracy 0.9147 | 10519 tokens/s
+Epoch 18/20: training...
+  training: batch 500/2000
+  training: batch 1000/2000
+  training: batch 1500/2000
+  training: batch 2000/2000
+Epoch 18/20: validating...
+epoch 018 | train 0.4856 | validation 0.2562 | token accuracy 0.9171 | 11632 tokens/s
+Epoch 19/20: training...
+  training: batch 500/2000
+  training: batch 1000/2000
+  training: batch 1500/2000
+  training: batch 2000/2000
+Epoch 19/20: validating...
+epoch 019 | train 0.4763 | validation 0.2501 | token accuracy 0.9191 | 11506 tokens/s
+Epoch 20/20: training...
+  training: batch 500/2000
+  training: batch 1000/2000
+  training: batch 1500/2000
+  training: batch 2000/2000
+Epoch 20/20: validating...
+epoch 020 | train 0.4696 | validation 0.2469 | token accuracy 0.9201 | 10958 tokens/s
+/home2/manas.agrawal/anlp/anlp-assignment-1/src/utils.py:136: FutureWarning: You are using `torch.load` with `weights_only=False` (the current default value), which uses the default pickle module implicitly. It is possible to construct malicious pickle data which will execute arbitrary code during unpickling (See https://github.com/pytorch/pytorch/blob/main/SECURITY.md#untrusted-models for more details). In a future release, the default value for `weights_only` will be flipped to `True`. This limits the functions that could be executed during unpickling. Arbitrary objects will no longer be allowed to be loaded via this mode unless they are explicitly allowlisted by the user via `torch.serialization.add_safe_globals`. We recommend you start setting `weights_only=True` for any use case where you don't have full control of the loaded file. Please open an issue on GitHub for any issues related to this experimental feature.
+  checkpoint = torch.load(Path(path), map_location=device)
+Saved final test metrics to /home2/manas.agrawal/anlp/anlp-assignment-1/outputs/metrics/C5_test_metrics.json
+Final test metrics:
+  bit_level_accuracy: 0.916518
+  sequence_accuracy: 0.000000
+  levenshtein_distance: 103.882000
+  loss: 0.245980
+  token_accuracy: 0.920368
+  training_time_seconds: 3898.563834
+  gpu_peak_memory_mb: 1080.935547
